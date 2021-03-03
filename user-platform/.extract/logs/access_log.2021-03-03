@@ -1,5 +1,0 @@
-0:0:0:0:0:0:0:1 - - [03/Mar/2021:21:29:00 +0800] GET /user/register HTTP/1.1 200 12 http-bio-8080-exec-1 29
-0:0:0:0:0:0:0:1 - - [03/Mar/2021:21:29:02 +0800] GET /user/register HTTP/1.1 200 12 http-bio-8080-exec-3 6
-0:0:0:0:0:0:0:1 - - [03/Mar/2021:21:30:00 +0800] GET /user/register HTTP/1.1 200 12 http-bio-8080-exec-4 47
-0:0:0:0:0:0:0:1 - - [03/Mar/2021:21:30:15 +0800] GET /user/register HTTP/1.1 200 12 http-bio-8080-exec-6 3
-0:0:0:0:0:0:0:1 - - [03/Mar/2021:21:41:03 +0800] GET /user/register HTTP/1.1 200 12 http-bio-8080-exec-8 5

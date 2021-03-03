@@ -53,6 +53,13 @@
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.1</version>
+                <configuration>
+                    <mode>context</mode>
+                    <contextFile>src/main/webapp/WEB-INF/context.xml</contextFile>
+                    <contextReloadable>true</contextReloadable>
+                    <enableNaming>true</enableNaming>
+                    <useNaming>true</useNaming>
+                </configuration>
                 <executions>
                     <execution>
                         <id>tomcat-run</id>
@@ -70,5 +77,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

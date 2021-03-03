@@ -8,16 +8,19 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-/**
- * 输出 “Hello,World” Controller
- */
-@Path("/hello")
+
 public class HelloWorldController implements PageController {
 
     @GET
     @POST
-    @Path("/world") // /hello/world -> HelloWorldController
+    @Path("/registry") // /hello/world -> HelloWorldController
     public String execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
-        return "index.jsp";
+        request.getServletContext().getAttribute("dbConnectionManager");
+        return "registry.jsp";
+    }
+
+    @Path("/registry-success")
+    public String registrySuccess() {
+        return "registry-success.jsp";
     }
 }

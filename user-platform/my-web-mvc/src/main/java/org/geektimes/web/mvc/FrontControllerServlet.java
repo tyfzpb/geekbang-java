@@ -19,9 +19,13 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.*;
 
 import static java.util.Arrays.asList;
@@ -56,19 +60,21 @@ public class FrontControllerServlet extends HttpServlet {
         for (Controller controller : ServiceLoader.load(Controller.class)) {
             Class<?> controllerClass = controller.getClass();
             Path pathFromClass = controllerClass.getAnnotation(Path.class);
-            String requestPath = pathFromClass.value();
+            String requestPath = Objects.isNull(pathFromClass)? "" : pathFromClass.value();
             Method[] publicMethods = controllerClass.getMethods();
             // 处理方法支持的 HTTP 方法集合
             for (Method method : publicMethods) {
-                Set<String> supportedHttpMethods = findSupportedHttpMethods(method);
                 Path pathFromMethod = method.getAnnotation(Path.class);
-                if (pathFromMethod != null) {
-                    requestPath += pathFromMethod.value();
-                    handleMethodInfoMapping.put(requestPath,
-                            new HandlerMethodInfo(requestPath, method, supportedHttpMethods));
+                if(pathFromMethod == null){
+                    continue;
                 }
+                String path = requestPath + pathFromMethod.value();
+                Set<String> supportedHttpMethods = findSupportedHttpMethods(method);
+                handleMethodInfoMapping.put(path,
+                        new HandlerMethodInfo(path, method, supportedHttpMethods));
+                controllersMapping.put(path, controller);
             }
-            controllersMapping.put(requestPath, controller);
+
         }
     }
 
@@ -129,7 +135,6 @@ public class FrontControllerServlet extends HttpServlet {
 
                     String httpMethod = request.getMethod();
 
-
                     if (!handlerMethodInfo.getSupportedHttpMethods().contains(httpMethod)) {
                         // HTTP 方法不支持
                         response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -137,14 +142,63 @@ public class FrontControllerServlet extends HttpServlet {
                     }
 
                     if (controller instanceof PageController) {
-                        PageController pageController = PageController.class.cast(controller);
-                        String viewPath = pageController.execute(request, response);
+                        Method handlerMethod = handlerMethodInfo.getHandlerMethod();
+
+                        Map<String, String[]> parameterMap = request.getParameterMap();
+
+                        Parameter[] methodParameters = handlerMethod.getParameters();
+
+                        Object[] paramValues = new Object[handlerMethod.getParameterCount()];
+                        for (int i = 0; i < methodParameters.length; i++) {
+                            if (HttpServletRequest.class == methodParameters[i].getType()){
+                                paramValues[i] = request;
+                                continue;
+                            }
+                            if (HttpServletResponse.class == methodParameters[i].getType()){
+                                paramValues[i] = response;
+                                continue;
+                            }
+                            if (Integer.class == methodParameters[i].getType()){
+                                paramValues[i] = Integer.valueOf(Arrays.toString(parameterMap.get(methodParameters[i].getName()))
+                                        .replaceAll("\\[|\\]", "").replaceAll("\\s", ""));
+                                continue;
+                            }
+                            // String Long Boolean ...
+
+                            Class<?> type = methodParameters[i].getType();
+                            Object instance = type.newInstance();
+
+                            BeanInfo beanInfo = Introspector.getBeanInfo(type);
+                            PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+                            for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+                                String name = propertyDescriptor.getName();
+                                if (parameterMap.containsKey(name)){
+                                    String value = Arrays.toString(parameterMap.get(name))
+                                            .replaceAll("\\[|\\]", "").replaceAll("\\s", "");
+
+                                    Method writeMethod = propertyDescriptor.getWriteMethod();
+
+                                    if (Integer.class == propertyDescriptor.getPropertyType()){
+                                        writeMethod.invoke(instance, Integer.valueOf(value));
+                                    }
+
+                                    if (String.class == propertyDescriptor.getPropertyType()){
+                                        writeMethod.invoke(instance, value);
+                                    }
+                                }
+                            }
+
+                            paramValues[i] = instance;
+                        }
+
+                        String viewPath = (String) handlerMethod.invoke(controller, paramValues);
                         // 页面请求 forward
                         // request -> RequestDispatcher forward
                         // RequestDispatcher requestDispatcher = request.getRequestDispatcher(viewPath);
                         // ServletContext -> RequestDispatcher forward
                         // ServletContext -> RequestDispatcher 必须以 "/" 开头
                         ServletContext servletContext = request.getServletContext();
+
                         if (!viewPath.startsWith("/")) {
                             viewPath = "/" + viewPath;
                         }
@@ -152,10 +206,24 @@ public class FrontControllerServlet extends HttpServlet {
                         requestDispatcher.forward(request, response);
                         return;
                     } else if (controller instanceof RestController) {
-                        // TODO
-                        Object obj = handlerMethodInfo.getHandlerMethod().invoke(controller,request,response);
-                        response.setCharacterEncoding("UTF-8");
-                        response.getWriter().print(obj);
+                        Map<String, String[]> parameterMap = request.getParameterMap();
+
+                        Method handlerMethod = handlerMethodInfo.getHandlerMethod();
+
+                        Parameter[] parameters = handlerMethod.getParameters();
+
+                        Object[] paramValues = new Object[handlerMethod.getParameterCount()];
+                        for (int i = 0; i < parameters.length; i++) {
+                            String value = Arrays.toString(parameterMap.get(parameters[i].getName()))
+                                    .replaceAll("\\[|\\]", "").replaceAll("\\s", "");
+
+                            paramValues[i] = value;
+                        }
+
+                        Object result = handlerMethod.invoke(controller, paramValues);
+
+                        response.setContentType("text/plain");
+                        response.getWriter().write(result.toString());
                     }
 
                 }

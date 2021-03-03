@@ -43,7 +43,20 @@ public class DatabaseUserRepository implements UserRepository {
 
     @Override
     public boolean save(User user) {
+        Connection connection = dbConnectionManager.getConnection();
+        try {
+            Statement statement = connection.createStatement();
+
+            String sql = String.format("INSERT INTO users(name, password, email, phoneNumber) VALUES ('%s', '%s', '%s', '%s')",
+                    user.getName(), user.getPassword(), user.getEmail(), user.getPhoneNumber());
+
+            int i = statement.executeUpdate(sql);
+            return i > 0;
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
         return false;
+
     }
 
     @Override
@@ -65,8 +78,28 @@ public class DatabaseUserRepository implements UserRepository {
     public User getByNameAndPassword(String userName, String password) {
         return executeQuery("SELECT id,name,password,email,phoneNumber FROM users WHERE name=? and password=?",
                 resultSet -> {
-                    // TODO
-                    return new User();
+                    BeanInfo userBeanInfo = Introspector.getBeanInfo(User.class, Object.class);
+                    while (resultSet.next()) { // 如果存在并且游标滚动 // SQLException
+                        User user = new User();
+                        for (PropertyDescriptor propertyDescriptor : userBeanInfo.getPropertyDescriptors()) {
+                            String fieldName = propertyDescriptor.getName();
+                            Class fieldType = propertyDescriptor.getPropertyType();
+                            String methodName = resultSetMethodMappings.get(fieldType);
+                            // 可能存在映射关系（不过此处是相等的）
+                            String columnLabel = mapColumnLabel(fieldName);
+                            Method resultSetMethod = ResultSet.class.getMethod(methodName, String.class);
+                            // 通过放射调用 getXXX(String) 方法
+                            Object resultValue = resultSetMethod.invoke(resultSet, columnLabel);
+                            // 获取 User 类 Setter方法
+                            // PropertyDescriptor ReadMethod 等于 Getter 方法
+                            // PropertyDescriptor WriteMethod 等于 Setter 方法
+                            Method setterMethodFromUser = propertyDescriptor.getWriteMethod();
+                            // 以 id 为例，  user.setId(resultSet.getLong("id"));
+                            setterMethodFromUser.invoke(user, resultValue);
+                            return user;
+                        }
+                    }
+                    return null;
                 }, COMMON_EXCEPTION_HANDLER, userName, password);
     }
 

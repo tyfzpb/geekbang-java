@@ -55,6 +55,13 @@
             </configuration>
           </execution>
         </executions>
+        <configuration>
+          <mode>context</mode>
+          <contextFile>src/main/webapp/WEB-INF/context.xml</contextFile>
+          <contextReloadable>true</contextReloadable>
+          <enableNaming>true</enableNaming>
+          <useNaming>true</useNaming>
+        </configuration>
       </plugin>
     </plugins>
   </build>

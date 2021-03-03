@@ -1,5 +1,7 @@
 package org.geektimes.projects.user.web.listener;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
@@ -7,24 +9,47 @@ import javax.sql.DataSource;
 import javax.annotation.Resource;
 import org.geektimes.projects.user.sql.DBConnectionManager;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 @WebListener
 public class DBConnectionInitializerListener implements ServletContextListener {
 
-    /*
-     * 使用Resource注解成员变量，通过名字查找web.xml中配置的数据源并注入进来
-     * lookup：指定目录处的名称，此属性是固定的
-     * name：指定数据源的名称，即数据源处配置的name属性
-     */
-    @Resource(lookup="java:/comp/env", name="jdbc/UserPlatformDB")
-    private DataSource dataSource;
+    private DBConnectionManager dbConnectionManager ;
+
+//    @Resource(lookup="java:/comp/env", name="jdbc/UserPlatformDB")
+//    private  DataSource dataSource;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        DBConnectionManager.setDataSource(dataSource);
+        try {
+        Context cxt=new InitialContext();
+
+        //获取与逻辑名相关联的数据源对象
+       // DataSource ds=(DataSource)cxt.lookup("java:comp/env/jdbc/UserPlatformDB");
+        //dbConnectionManager = new DBConnectionManager(ds);
+
+        //Connection conn=ds.getConnection();
+            dbConnectionManager = new DBConnectionManager();
+            String databaseURL = "jdbc:derby:db/user-platform;create=true";
+            Connection connection = DriverManager.getConnection(databaseURL);
+
+        //Connection connection = ds.getConnection();
+
+            Statement statement = connection.createStatement();
+            statement.execute(DBConnectionManager.CREATE_USERS_TABLE_DDL_SQL);
+            connection.close();
+        }catch (Exception e){
+            sce.getServletContext().log(e.getMessage());
+        }
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-
+        if(dbConnectionManager != null){
+            dbConnectionManager.releaseConnection();
+        }
     }
 }
