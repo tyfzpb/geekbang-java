@@ -28,15 +28,15 @@ public class DBConnectionInitializerListener implements ServletContextListener {
         Context cxt=new InitialContext();
 
         //获取与逻辑名相关联的数据源对象
-       // DataSource ds=(DataSource)cxt.lookup("java:comp/env/jdbc/UserPlatformDB");
-        //dbConnectionManager = new DBConnectionManager(ds);
+        DataSource ds=(DataSource)cxt.lookup("java:comp/env/jdbc/UserPlatformDB");
+        dbConnectionManager = new DBConnectionManager(ds);
 
-        //Connection conn=ds.getConnection();
-            dbConnectionManager = new DBConnectionManager();
-            String databaseURL = "jdbc:derby:db/user-platform;create=true";
-            Connection connection = DriverManager.getConnection(databaseURL);
 
-        //Connection connection = ds.getConnection();
+          //  dbConnectionManager = new DBConnectionManager();
+           // String databaseURL = "jdbc:derby:db/user-platform;create=true";
+           // Connection connection = DriverManager.getConnection(databaseURL);
+
+        Connection connection = ds.getConnection();
 
             Statement statement = connection.createStatement();
             statement.execute(DBConnectionManager.CREATE_USERS_TABLE_DDL_SQL);
