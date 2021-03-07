@@ -2,61 +2,68 @@ package org.geektimes.projects.user.sql;
 
 import org.geektimes.projects.user.domain.User;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class DBConnectionManager {
+public class DBConnectionManager { // JNDI Component
 
-    public static DataSource dataSource;
+    private final Logger logger = Logger.getLogger(DBConnectionManager.class.getName());
 
-    public DBConnectionManager(DataSource ds){
-        dataSource = ds;
+    @Resource(name = "jdbc/mysql")
+    private DataSource dataSource;
+
+    @Resource(name = "bean/EntityManager")
+    private EntityManager entityManager;
+
+
+    public EntityManager getEntityManager() {
+        logger.info("当前 EntityManager 实现类：" + entityManager.getClass().getName());
+        return entityManager;
     }
 
-    public DBConnectionManager(){
-
-    }
-
-    private Connection connection;
-
-
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
-
-    public Connection getConnection(){
-        try{
-            if(dataSource != null){
-                this.connection = dataSource.getConnection();
-            }
-            if(this.connection == null){
-                String databaseURL = "jdbc:derby:db/user-platform;create=true";
-                this.connection = DriverManager.getConnection(databaseURL);
-            }
-        }catch (SQLException e){
-            e.printStackTrace();
+    public Connection getConnection() {
+        // 依赖查找
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, e.getMessage());
         }
-        return this.connection;
+        if (connection != null) {
+            logger.log(Level.INFO, "获取 JNDI 数据库连接成功！");
+        }
+        return connection;
     }
+
+
+//    private Connection connection;
+//
+//    public void setConnection(Connection connection) {
+//        this.connection = connection;
+//    }
+//
+//    public Connection getConnection() {
+//        return this.connection;
+//    }
 
     public void releaseConnection() {
-        if (this.connection != null) {
-            try {
-                this.connection.close();
-            } catch (SQLException e) {
-                throw new RuntimeException(e.getCause());
-            }
-        }
+//        if (this.connection != null) {
+//            try {
+//                this.connection.close();
+//            } catch (SQLException e) {
+//                throw new RuntimeException(e.getCause());
+//            }
+//        }
     }
 
     public static final String DROP_USERS_TABLE_DDL_SQL = "DROP TABLE users";
@@ -81,19 +88,19 @@ public class DBConnectionManager {
 //        通过 ClassLoader 加载 java.sql.DriverManager -> static 模块 {}
 //        DriverManager.setLogWriter(new PrintWriter(System.out));
 //
-         // Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
+//        Class.forName("org.apache.derby.jdbc.EmbeddedDriver");
 //        Driver driver = DriverManager.getDriver("jdbc:derby:/db/user-platform;create=true");
 //        Connection connection = driver.connect("jdbc:derby:/db/user-platform;create=true", new Properties());
 
-        String databaseURL = "jdbc:derby:db/user-platform;create=true";
+        String databaseURL = "jdbc:derby:/db/user-platform;create=true";
         Connection connection = DriverManager.getConnection(databaseURL);
 
         Statement statement = connection.createStatement();
         // 删除 users 表
-        //System.out.println(statement.execute(DROP_USERS_TABLE_DDL_SQL)); // false
+        System.out.println(statement.execute(DROP_USERS_TABLE_DDL_SQL)); // false
         // 创建 users 表
-       // System.out.println(statement.execute(CREATE_USERS_TABLE_DDL_SQL)); // false
-        //System.out.println(statement.executeUpdate(INSERT_USER_DML_SQL));  // 5
+        System.out.println(statement.execute(CREATE_USERS_TABLE_DDL_SQL)); // false
+        System.out.println(statement.executeUpdate(INSERT_USER_DML_SQL));  // 5
 
         // 执行查询语句（DML）
         ResultSet resultSet = statement.executeQuery("SELECT id,name,password,email,phoneNumber FROM users");
@@ -179,4 +186,5 @@ public class DBConnectionManager {
         typeMethodMappings.put(Long.class, "getLong");
         typeMethodMappings.put(String.class, "getString");
     }
+
 }

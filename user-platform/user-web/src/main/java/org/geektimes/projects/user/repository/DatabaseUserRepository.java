@@ -23,7 +23,7 @@ public class DatabaseUserRepository implements UserRepository {
     /**
      * 通用处理方式
      */
-    private static Consumer<Throwable> COMMON_EXCEPTION_HANDLER = e -> logger.log(Level.SEVERE, e.getMessage());
+    //private static Consumer<Throwable> COMMON_EXCEPTION_HANDLER = e -> logger.log(Level.SEVERE, e.getMessage());
 
     public static final String INSERT_USER_DML_SQL =
             "INSERT INTO users(name,password,email,phoneNumber) VALUES " +
@@ -43,19 +43,20 @@ public class DatabaseUserRepository implements UserRepository {
 
     @Override
     public boolean save(User user) {
-        Connection connection = dbConnectionManager.getConnection();
+        boolean result = false;
+        Connection connection = getConnection();
         try {
-            Statement statement = connection.createStatement();
-
-            String sql = String.format("INSERT INTO users(name, password, email, phoneNumber) VALUES ('%s', '%s', '%s', '%s')",
-                    user.getName(), user.getPassword(), user.getEmail(), user.getPhoneNumber());
-
-            int i = statement.executeUpdate(sql);
-            return i > 0;
-        }catch(SQLException e){
+            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_DML_SQL);
+            preparedStatement.setString(1,user.getName());
+            preparedStatement.setString(2,user.getPassword());
+            preparedStatement.setString(3,user.getEmail());
+            preparedStatement.setString(4,user.getPhoneNumber());
+            return preparedStatement.executeUpdate() > 0;
+        } catch (Throwable e) {
+            logger.log(Level.SEVERE, e.getMessage());
             e.printStackTrace();
         }
-        return false;
+        return result;
 
     }
 
@@ -79,6 +80,7 @@ public class DatabaseUserRepository implements UserRepository {
         return executeQuery("SELECT id,name,password,email,phoneNumber FROM users WHERE name=? and password=?",
                 resultSet -> {
                     BeanInfo userBeanInfo = Introspector.getBeanInfo(User.class, Object.class);
+                    User resultUser = null;
                     while (resultSet.next()) { // 如果存在并且游标滚动 // SQLException
                         User user = new User();
                         for (PropertyDescriptor propertyDescriptor : userBeanInfo.getPropertyDescriptors()) {
@@ -96,11 +98,15 @@ public class DatabaseUserRepository implements UserRepository {
                             Method setterMethodFromUser = propertyDescriptor.getWriteMethod();
                             // 以 id 为例，  user.setId(resultSet.getLong("id"));
                             setterMethodFromUser.invoke(user, resultValue);
-                            return user;
                         }
+                        resultUser = user;
+                        break;
                     }
-                    return null;
-                }, COMMON_EXCEPTION_HANDLER, userName, password);
+                    return resultUser;
+                }, e->{
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
+                }, userName, password);
     }
 
     @Override
@@ -158,8 +164,8 @@ public class DatabaseUserRepository implements UserRepository {
 
                 // Boolean -> boolean
                 String methodName = preparedStatementMethodMappings.get(argType);
-                Method method = PreparedStatement.class.getMethod(methodName, wrapperType);
-                method.invoke(preparedStatement, i + 1, args);
+                Method method = PreparedStatement.class.getMethod(methodName, int.class,wrapperType);
+                method.invoke(preparedStatement, i + 1, arg);
             }
             ResultSet resultSet = preparedStatement.executeQuery();
             // 返回一个 POJO List -> ResultSet -> POJO List

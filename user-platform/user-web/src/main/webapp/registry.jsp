@@ -1,5 +1,9 @@
 <head>
 	<jsp:directive.include file="/WEB-INF/jsp/prelude/include-head-meta.jspf" />
+	<jsp:directive.include file="/WEB-INF/jsp/prelude/include-js.jspf"/>
+	<%
+            String contextPath = request.getContextPath();
+        %>
 	<title>My Registry Page</title>
     <style>
       .bd-placeholder-img {
@@ -51,7 +55,7 @@
         			var phoneNumber = $("#inputPhoneNumber").val();
         			$.ajax({
                                  type: "POST",
-                                 url: "/doRegistry",
+                                 url: "${contextPath}/doRegistry",
                                  data: {
                                        name: username,
                                        password: password,

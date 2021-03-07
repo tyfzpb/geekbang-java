@@ -1,5 +1,6 @@
 package org.geektimes.projects.user.web.controller;
 
+import org.geektimes.context.ComponentContext;
 import org.geektimes.projects.user.domain.User;
 import org.geektimes.projects.user.service.UserService;
 import org.geektimes.projects.user.service.impl.UserServiceImpl;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 public class UserController implements RestController {
 
-    private UserService userService = new UserServiceImpl();
+    private UserService userService = ComponentContext.getInstance().getComponent("bean/UserService");
 
     @GET
     @POST
@@ -31,8 +32,12 @@ public class UserController implements RestController {
         user.setPassword(password);
         user.setName(name);
         user.setPhoneNumber(phoneNumber);
-        userService.register(user);
+        boolean flag = userService.register(user);
+        System.out.println(flag);
+        System.out.println(user);
         user = userService.queryUserByNameAndPassword(name,password);
+       // userService.queryUserById(user.getId());
+        System.out.println(user);
         Map<String, Object> result = new HashMap<>(2);
         result.put("code", 1);
         result.put("message", "注册成功");
