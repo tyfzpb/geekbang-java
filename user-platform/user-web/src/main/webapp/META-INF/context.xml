@@ -21,7 +21,7 @@
 			  maxActive="100" maxIdle="30" maxWait="10000"
 			  username="tycacl" password="zxcvbnM87"
 			  driverClassName="com.mysql.cj.jdbc.Driver"
-			  url="jdbc:mysql://test-ty-fzpb.mysql.rds.aliyuncs.com:3306/test_user"/>
+			  url="jdbc:mysql://test-ty-fzpb.mysql.rds.aliyuncs.com:3306/test_user?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false"/>
 
 	<!-- FactoryBean -->
 	<Resource name="bean/DBConnectionManager" auth="Container"
