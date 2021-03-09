@@ -1,3 +1,0 @@
-<script src="${contextPath}/static/js/jquery-3.6.0.js" crossorigin="anonymous"></script>
-<script src="${contextPath}/static/js/popper-1.16.1.min.js" crossorigin="anonymous"></script>
-<script src="${contextPath}/static/js/bootstrap-4.6.0.min.js" crossorigin="anonymous"></script>
