@@ -15,12 +15,21 @@ public class HelloWorldController implements PageController {
     @POST
     @Path("/registry") // /hello/world -> HelloWorldController
     public String execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
-        request.getServletContext().getAttribute("dbConnectionManager");
         return "registry.jsp";
     }
 
     @Path("/registry-success")
     public String registrySuccess() {
         return "registry-success.jsp";
+    }
+
+    @Path("/login")
+    public String login(){
+        return "login-form.jsp";
+    }
+
+    @Path("/login-success")
+    public String loginSuccess(){
+        return "login-success.jsp";
     }
 }

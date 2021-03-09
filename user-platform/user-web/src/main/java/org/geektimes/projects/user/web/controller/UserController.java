@@ -1,5 +1,6 @@
 package org.geektimes.projects.user.web.controller;
 
+import org.apache.commons.lang.StringUtils;
 import org.geektimes.context.ComponentContext;
 import org.geektimes.projects.user.domain.User;
 import org.geektimes.projects.user.service.UserService;
@@ -59,6 +60,28 @@ public class UserController implements RestController {
         }else{
             result.put("code", 0);
             result.put("message", "注册失败");
+        }
+        return result;
+    }
+
+    @POST
+    @GET
+    @Path("/doLogin")
+    public Object doLogin(String name,String password){
+        Map<String, Object> result = new HashMap<>(2);
+        if(StringUtils.isBlank(name) || StringUtils.isBlank(password)){
+            result.put("code", 0);
+            result.put("message", "登录失败，请检查用户名或密码是否正确。");
+            return result;
+        }
+        User user = userService.queryUserByNameAndPassword(name,password);
+        if(user != null){
+            result.put("code", 1);
+            result.put("message", "登录成功");
+            result.put("user",user);
+        }else{
+            result.put("code", 0);
+            result.put("message", "登录失败，请检查用户名或密码是否正确。");
         }
         return result;
     }
