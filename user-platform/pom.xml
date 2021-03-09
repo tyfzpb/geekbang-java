@@ -34,6 +34,7 @@
         <module>user-web</module>
     </modules>
 
+
     <properties>
         <revision>v1-SNAPSHOT</revision>
         <file.encoding>UTF-8</file.encoding>

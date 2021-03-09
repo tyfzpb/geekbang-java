@@ -1,5 +1,7 @@
 package org.geektimes.web.mvc;
 
+import com.alibaba.fastjson.JSONObject;
+import jdk.nashorn.internal.runtime.JSONFunctions;
 import org.apache.commons.lang.StringUtils;
 import org.geektimes.web.mvc.controller.Controller;
 import org.geektimes.web.mvc.controller.PageController;
@@ -222,8 +224,9 @@ public class FrontControllerServlet extends HttpServlet {
 
                         Object result = handlerMethod.invoke(controller, paramValues);
 
+                        Object jsonResult = JSONObject.toJSON(result);
                         response.setContentType("text/plain");
-                        response.getWriter().write(result.toString());
+                        response.getWriter().write(jsonResult.toString());
                     }
 
                 }

@@ -49,4 +49,13 @@ public class InMemoryUserRepository implements UserRepository {
     public Collection<User> getAll() {
         return repository.values();
     }
+
+    @Override
+    public User getByName(String userName) {
+        return repository.values()
+                .stream()
+                .filter(user -> Objects.equals(userName, user.getName()))
+                .findFirst()
+                .get();
+    }
 }

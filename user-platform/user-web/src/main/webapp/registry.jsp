@@ -1,9 +1,9 @@
 <head>
+    <%
+                String contextPath = request.getContextPath();
+            %>
 	<jsp:directive.include file="/WEB-INF/jsp/prelude/include-head-meta.jspf" />
 	<jsp:directive.include file="/WEB-INF/jsp/prelude/include-js.jspf"/>
-	<%
-            String contextPath = request.getContextPath();
-        %>
 	<title>My Registry Page</title>
     <style>
       .bd-placeholder-img {
@@ -15,7 +15,7 @@
         user-select: none;
       }
 
-      @media (min-width: 768px) {
+      @media (min-width: 300px) {
         .bd-placeholder-img-lg {
           font-size: 3.5rem;
         }
@@ -28,19 +28,23 @@
 			<h1 class="h3 mb-3 font-weight-normal">注册</h1>
 
 			<label for="inputUsername" class="sr-only">用户名</label>
-			<input type="text" id="inputUsername" name="name" class="form-control" placeholder="请输入用户名" required>
+			<input type="text" id="inputUsername" name="name" class="form-control" placeholder="请输入用户名" required autofocus onblur="checkUserName();"/>
+			<div id="showUserNameMsg"></div>
 			<br/>
 
-			<label for="inputPassword" class="sr-only">Password</label>
-			<input type="password" id="inputPassword" name="password" class="form-control" placeholder="请输入密码" required>
+			<label for="inputPassword" class="sr-only">密码</label>
+			<input type="password" id="inputPassword" name="password" class="form-control" placeholder="请输入密码" required onblur="checkPassword();"/>
+			<div id="showPasswordMsg"></div>
 			<br/>
 
 			<label for="inputEmail" class="sr-only">请输入电子邮件</label>
-			<input type="email" id="inputEmail" name="email" class="form-control" placeholder="请输入电子邮件" required autofocus>
+			<input type="email" id="inputEmail" name="email" class="form-control" placeholder="请输入电子邮件" required onblur="checkEmail();"/>
+			<div id="showEmailMsg"></div>
 			<br />
 
-			<label for="inputPhoneNumber" class="sr-only">Password</label>
-			<input type="tel" id="inputPhoneNumber" name="phoneNumber" class="form-control" placeholder="请输入手机号" required>
+			<label for="inputPhoneNumber" class="sr-only">手机号码</label>
+			<input type="tel" id="inputPhoneNumber" name="phoneNumber" class="form-control" placeholder="请输入手机号" required onblur="checkPhoneNumber();"/>
+			<div id="showPhoneNumberMsg"></div>
 			<br />
 
 			<button class="btn btn-lg btn-primary btn-block" type="button" onclick="submitRegistryForm();">确定</button>
@@ -49,23 +53,104 @@
 </body>
 <script>
     function submitRegistryForm(){
-        var username = $("#inputUsername").val();
-        			var password = $("#inputPassword").val();
-        			var email = $("#inputEmail").val();
-        			var phoneNumber = $("#inputPhoneNumber").val();
-        			$.ajax({
-                                 type: "POST",
-                                 url: "${contextPath}/doRegistry",
-                                 data: {
-                                       name: username,
-                                       password: password,
-                                       email: email,
-                                       phoneNumber: phoneNumber
-                                 },
-                                 success: function(data){
-                                          location.href = '${contextPath}/registry-success';
-                                 }
-                             });
+        var flag = checkAll();
+        if(flag){
+           return;
+        }
+        var username = $("#inputUsername").val().trim();
+        var password = $("#inputPassword").val().trim();
+        var email = $("#inputEmail").val().trim();
+        var phoneNumber = $("#inputPhoneNumber").val().trim();
+        $.getJSON("${contextPath}/doRegistry",
+                    { name: username,
+                      password: password,
+                      email: email,
+                      phoneNumber: phoneNumber},
+                    function(json){
+                        if(json.code == "1"){
+                            location.href = '${contextPath}/registry-success';
+                        }else{
+                            alert("注册失败");
+                        }
+                    });
+    };
 
-    }
+    function checkAll(){
+        var username = $("#showUserNameMsg").html();
+        var password = $("#showPasswordMsg").html();
+        var email = $("#showEmailMsg").html();
+        var phoneNumber = $("#showPhoneNumberMsg").html();
+        var flag =  username != null || password != null || email != null || phoneNumber != null;
+        return !flag;
+    };
+
+    function checkUserName(){
+        var name = $("#inputUsername").val().trim();
+        if(name == ""){
+            $("#showUserNameMsg").html("用户名不能为空").css("color","red");
+            $("#inputUsername").focus();
+            return;
+        }
+        $.getJSON("${contextPath}/checkUserName", { name: name }, function(json){
+            if(json.code == "1"){
+                $("#showUserNameMsg").html("");
+            }else{
+                $("#showUserNameMsg").html(json.message).css("color","red");
+                $("#inputUsername").focus();
+            }
+        });
+    };
+
+    function checkPassword(){
+            var password = $("#inputPassword").val().trim();
+            if(password == ""){
+                $("#showPasswordMsg").html("密码不能为空").css("color","red");
+                $("#inputPassword").focus();
+                return;
+            }
+            $.getJSON("${contextPath}/validatePassword", { password: password }, function(json){
+                if(json.code == "1"){
+                    $("#showPasswordMsg").html("");
+                }else{
+                    $("#showPasswordMsg").html(json.message).css("color","red");
+                    $("#inputPassword").focus();
+                }
+            });
+        };
+
+   function checkEmail(){
+            var email = $("#inputEmail").val().trim();
+            if(email == ""){
+                 $("#showEmailMsg").html("Email不能为空").css("color","red");
+                 $("#inputEmail").focus();
+                 return;
+            }
+           $.getJSON("${contextPath}/validateEmail", { email: email }, function(json){
+               if(json.code == "1"){
+                   $("#showEmailMsg").html("");
+               }else{
+                   $("#showEmailMsg").html(json.message).css("color","red");
+                   $("#inputEmail").focus();
+               }
+           });
+
+
+       };
+
+   function checkPhoneNumber(){
+            var phoneNumber = $("#inputPhoneNumber").val().trim();
+            if(phoneNumber == ""){
+                 $("#showPhoneNumberMsg").html("手机号码不能为空").css("color","red");
+                 $("#inputPhoneNumber").focus();
+                 return;
+            }
+           $.getJSON("${contextPath}/validatePhoneNumber", { phoneNumber: phoneNumber }, function(json){
+               if(json.code == "1"){
+                   $("#showPhoneNumberMsg").html("");
+               }else{
+                   $("#showPhoneNumberMsg").html(json.message).css("color","red");
+                   $("#inputPhoneNumber").focus();
+               }
+           });
+       };
 </script>

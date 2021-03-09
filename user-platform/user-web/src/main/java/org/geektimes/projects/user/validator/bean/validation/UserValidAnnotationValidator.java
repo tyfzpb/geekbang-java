@@ -19,6 +19,7 @@ public class UserValidAnnotationValidator implements ConstraintValidator<UserVal
         // 获取模板信息
         context.getDefaultConstraintMessageTemplate();
 
+
         return false;
     }
 }

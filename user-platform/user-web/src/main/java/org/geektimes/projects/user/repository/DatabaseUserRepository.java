@@ -26,8 +26,9 @@ public class DatabaseUserRepository implements UserRepository {
     //private static Consumer<Throwable> COMMON_EXCEPTION_HANDLER = e -> logger.log(Level.SEVERE, e.getMessage());
 
     public static final String INSERT_USER_DML_SQL =
-            "INSERT INTO users(name,password,email,phoneNumber) VALUES " +
-                    "(?,?,?,?)";
+            "INSERT INTO users(name,password,email,phoneNumber) VALUES (?,?,?,?)";
+
+    public static final String UPDATE_USER_DML_SQL = "UPDATE users set name=?,password=?,email=?,phoneNumber=? WHERE id=?";
 
     public static final String QUERY_ALL_USERS_DML_SQL = "SELECT id,name,password,email,phoneNumber FROM users";
 
@@ -43,36 +44,68 @@ public class DatabaseUserRepository implements UserRepository {
 
     @Override
     public boolean save(User user) {
-        boolean result = false;
-        Connection connection = getConnection();
-        try {
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_DML_SQL);
-            preparedStatement.setString(1,user.getName());
-            preparedStatement.setString(2,user.getPassword());
-            preparedStatement.setString(3,user.getEmail());
-            preparedStatement.setString(4,user.getPhoneNumber());
-            return preparedStatement.executeUpdate() > 0;
-        } catch (Throwable e) {
-            logger.log(Level.SEVERE, e.getMessage());
-            e.printStackTrace();
-        }
-        return result;
+        int iResult = executeUpdate(INSERT_USER_DML_SQL,user.getName(),user.getPassword(),user.getEmail(),user.getPhoneNumber());
+        return iResult > 0;
+//        Connection connection = getConnection();
+//        try {
+//            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USER_DML_SQL);
+//            preparedStatement.setString(1,user.getName());
+//            preparedStatement.setString(2,user.getPassword());
+//            preparedStatement.setString(3,user.getEmail());
+//            preparedStatement.setString(4,user.getPhoneNumber());
+//            return preparedStatement.executeUpdate() > 0;
+//        } catch (Throwable e) {
+//            logger.log(Level.SEVERE, e.getMessage());
+//            e.printStackTrace();
+//        }
+//        return false;
 
     }
 
     @Override
     public boolean deleteById(Long userId) {
-        return false;
+        int iResult = executeUpdate("delete from users where id=?",userId);
+        return iResult > 0;
     }
 
     @Override
     public boolean update(User user) {
-        return false;
+        int iResult = executeUpdate(UPDATE_USER_DML_SQL,user.getName(),user.getPassword(),user.getEmail(),user.getPhoneNumber(),user.getId());
+        return iResult > 0;
     }
 
     @Override
     public User getById(Long userId) {
-        return null;
+        return executeQuery("SELECT id,name,password,email,phoneNumber FROM users WHERE id=?",
+                resultSet -> {
+                    BeanInfo userBeanInfo = Introspector.getBeanInfo(User.class, Object.class);
+                    User resultUser = null;
+                    while (resultSet.next()) { // 如果存在并且游标滚动 // SQLException
+                        User user = new User();
+                        for (PropertyDescriptor propertyDescriptor : userBeanInfo.getPropertyDescriptors()) {
+                            String fieldName = propertyDescriptor.getName();
+                            Class fieldType = propertyDescriptor.getPropertyType();
+                            String methodName = resultSetMethodMappings.get(fieldType);
+                            // 可能存在映射关系（不过此处是相等的）
+                            String columnLabel = mapColumnLabel(fieldName);
+                            Method resultSetMethod = ResultSet.class.getMethod(methodName, String.class);
+                            // 通过放射调用 getXXX(String) 方法
+                            Object resultValue = resultSetMethod.invoke(resultSet, columnLabel);
+                            // 获取 User 类 Setter方法
+                            // PropertyDescriptor ReadMethod 等于 Getter 方法
+                            // PropertyDescriptor WriteMethod 等于 Setter 方法
+                            Method setterMethodFromUser = propertyDescriptor.getWriteMethod();
+                            // 以 id 为例，  user.setId(resultSet.getLong("id"));
+                            setterMethodFromUser.invoke(user, resultValue);
+                        }
+                        resultUser = user;
+                        break;
+                    }
+                    return resultUser;
+                }, e->{
+                    e.printStackTrace();
+                    new RuntimeException(e);
+                }, userId);
     }
 
     @Override
@@ -104,8 +137,8 @@ public class DatabaseUserRepository implements UserRepository {
                     }
                     return resultUser;
                 }, e->{
-                    System.out.println(e.getMessage());
                     e.printStackTrace();
+                    new RuntimeException(e);
                 }, userName, password);
     }
 
@@ -137,8 +170,69 @@ public class DatabaseUserRepository implements UserRepository {
             }
             return users;
         }, e -> {
-            // 异常处理
+            new RuntimeException(e);
         });
+    }
+
+    @Override
+    public User getByName(String userName) {
+        return executeQuery("SELECT id,name,password,email,phoneNumber FROM users WHERE name=?",
+                resultSet -> {
+                    BeanInfo userBeanInfo = Introspector.getBeanInfo(User.class, Object.class);
+                    User resultUser = null;
+                    while (resultSet.next()) { // 如果存在并且游标滚动 // SQLException
+                        User user = new User();
+                        for (PropertyDescriptor propertyDescriptor : userBeanInfo.getPropertyDescriptors()) {
+                            String fieldName = propertyDescriptor.getName();
+                            Class fieldType = propertyDescriptor.getPropertyType();
+                            String methodName = resultSetMethodMappings.get(fieldType);
+                            // 可能存在映射关系（不过此处是相等的）
+                            String columnLabel = mapColumnLabel(fieldName);
+                            Method resultSetMethod = ResultSet.class.getMethod(methodName, String.class);
+                            // 通过放射调用 getXXX(String) 方法
+                            Object resultValue = resultSetMethod.invoke(resultSet, columnLabel);
+                            // 获取 User 类 Setter方法
+                            // PropertyDescriptor ReadMethod 等于 Getter 方法
+                            // PropertyDescriptor WriteMethod 等于 Setter 方法
+                            Method setterMethodFromUser = propertyDescriptor.getWriteMethod();
+                            // 以 id 为例，  user.setId(resultSet.getLong("id"));
+                            setterMethodFromUser.invoke(user, resultValue);
+                        }
+                        resultUser = user;
+                        break;
+                    }
+                    return resultUser;
+                }, e->{
+                    e.printStackTrace();
+                    new RuntimeException(e);
+                }, userName);
+    }
+
+
+    protected int executeUpdate(String sql,Object... args){
+        Connection connection = getConnection();
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            for (int i = 0; i < args.length; i++) {
+                Object arg = args[i];
+                Class argType = arg.getClass();
+
+                Class wrapperType = wrapperToPrimitive(argType);
+
+                if (wrapperType == null) {
+                    wrapperType = argType;
+                }
+
+                // Boolean -> boolean
+                String methodName = preparedStatementMethodMappings.get(argType);
+                Method method = PreparedStatement.class.getMethod(methodName, int.class, wrapperType);
+                method.invoke(preparedStatement, i + 1, arg);
+            }
+            return preparedStatement.executeUpdate();
+        }catch (Throwable e) {
+            new RuntimeException(e);
+        }
+        return 0;
     }
 
     /**

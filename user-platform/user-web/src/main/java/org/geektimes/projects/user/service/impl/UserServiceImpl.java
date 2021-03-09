@@ -6,14 +6,23 @@ import org.geektimes.projects.user.repository.UserRepository;
 import org.geektimes.projects.user.service.UserService;
 import org.geektimes.projects.user.sql.DBConnectionManager;
 import org.geektimes.projects.user.sql.LocalTransactional;
+import org.geektimes.projects.user.validator.bean.validation.group.UpdateGroup;
+import org.geektimes.util.MD5Utils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Set;
 
 
 public class UserServiceImpl implements UserService {
+
+    private final static String SALT = "01dfac889";
 
     @Resource(name = "bean/EntityManager")
     private EntityManager entityManager;
@@ -27,7 +36,7 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @PostConstruct
-    public void init(){
+    public void initUserRepository(){
         userRepository = new DatabaseUserRepository(dbConnectionManager);
     }
 
@@ -35,6 +44,11 @@ public class UserServiceImpl implements UserService {
     // 默认需要事务
     //@LocalTransactional
     public boolean register(User user) {
+        if(user == null){
+            return false;
+        }
+        String password = MD5Utils.getSaltMD5(user.getPassword(),SALT);
+        user.setPassword(password);
         return userRepository.save(user);
         //entityManager.persist(user);
         // 调用其他方法方法
@@ -66,6 +80,12 @@ public class UserServiceImpl implements UserService {
         //return true;
     }
 
+    private boolean validate(User user){
+        Set<ConstraintViolation<User>> constraintViolationSet = validator.validate(user, UpdateGroup.class);
+        constraintViolationSet.forEach(name -> System.out.println(name.getMessage()));
+        return constraintViolationSet == null || constraintViolationSet.isEmpty();
+    }
+
     @Override
     public boolean deregister(User user) {
         return false;
@@ -73,17 +93,29 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean update(User user) {
-        return false;
+        String password = MD5Utils.getSaltMD5(user.getPassword(),SALT);
+        user.setPassword(password);
+        return userRepository.update(user);
     }
 
     @Override
     public User queryUserById(Long id) {
-       return entityManager.find(User.class,id);
+       return userRepository.getById(id);
     }
 
     @Override
     public User queryUserByNameAndPassword(String name, String password) {
+        password = MD5Utils.getSaltMD5(password,SALT);
         return userRepository.getByNameAndPassword(name,password);
         //return entityManager.find()
+    }
+
+    @Override
+    public boolean checkUserName(String name) {
+        User user = userRepository.getByName(name);
+        if(user == null){
+            return true;
+        }
+        return false;
     }
 }

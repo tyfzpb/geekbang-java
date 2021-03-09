@@ -34,4 +34,11 @@ public interface UserService {
     User queryUserById(Long id);
 
     User queryUserByNameAndPassword(String name, String password);
+
+    /**
+     * 检查用户名是否唯一
+     * @param name
+     * @return
+     */
+    boolean checkUserName(String name);
 }
