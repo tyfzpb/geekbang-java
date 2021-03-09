@@ -37,19 +37,28 @@ public class UserController implements RestController {
         user.setPassword(password);
         user.setName(name);
         user.setPhoneNumber(phoneNumber);
+        //校验userName是否唯一
+        boolean flag = userService.checkUserName(name);
+        if(!flag){
+            result.put("code", 0);
+            result.put("message","该用户名已被占用，请更换");
+            return result;
+        }
+        //校验字段合法性
         Map<String,String> validationResult = validateSaveUser(user);
         if(validationResult != null){
             result.put("code", 0);
             result.put("message", validationResult);
+            return result;
+        }
+        //注册
+        flag = userService.register(user);
+        if(flag){
+           result.put("code", 1);
+           result.put("message", "注册成功");
         }else{
-            boolean flag = userService.register(user);
-            if(flag){
-                result.put("code", 1);
-                result.put("message", "注册成功");
-            }else{
-                result.put("code", 0);
-                result.put("message", "注册失败");
-            }
+            result.put("code", 0);
+            result.put("message", "注册失败");
         }
         return result;
     }
