@@ -27,22 +27,22 @@
 		<form class="form-signin">
 			<h1 class="h3 mb-3 font-weight-normal">注册</h1>
 
-			<label for="inputUsername" class="sr-only">用户名</label>
+			<label for="inputUsername" >用户名</label>
 			<input type="text" id="inputUsername" name="name" class="form-control" placeholder="请输入用户名" required autofocus onblur="checkUserName();"/>
 			<div id="showUserNameMsg"></div>
 			<br/>
 
-			<label for="inputPassword" class="sr-only">密码</label>
+			<label for="inputPassword" >密 码</label>
 			<input type="password" id="inputPassword" name="password" class="form-control" placeholder="请输入密码" required onblur="checkPassword();"/>
 			<div id="showPasswordMsg"></div>
 			<br/>
 
-			<label for="inputEmail" class="sr-only">请输入电子邮件</label>
+			<label for="inputEmail" >Email</label>
 			<input type="email" id="inputEmail" name="email" class="form-control" placeholder="请输入电子邮件" required onblur="checkEmail();"/>
 			<div id="showEmailMsg"></div>
 			<br />
 
-			<label for="inputPhoneNumber" class="sr-only">手机号码</label>
+			<label for="inputPhoneNumber" >手机号码</label>
 			<input type="tel" id="inputPhoneNumber" name="phoneNumber" class="form-control" placeholder="请输入手机号" required onblur="checkPhoneNumber();"/>
 			<div id="showPhoneNumberMsg"></div>
 			<br />
@@ -76,11 +76,11 @@
     };
 
     function checkAll(){
-        var username = $("#showUserNameMsg").html();
-        var password = $("#showPasswordMsg").html();
-        var email = $("#showEmailMsg").html();
-        var phoneNumber = $("#showPhoneNumberMsg").html();
-        var flag =  username != null || password != null || email != null || phoneNumber != null;
+        var showUserNameMsg = $("#showUserNameMsg").html();
+        var showPasswordMsg = $("#showPasswordMsg").html();
+        var showEmailMsg = $("#showEmailMsg").html();
+        var showPhoneNumberMsg = $("#showPhoneNumberMsg").html();
+        var flag =  showUserNameMsg != null || showPasswordMsg != null || showEmailMsg != null || showPhoneNumberMsg != null;
         return !flag;
     };
 
@@ -88,7 +88,6 @@
         var name = $("#inputUsername").val().trim();
         if(name == ""){
             $("#showUserNameMsg").html("用户名不能为空").css("color","red");
-            $("#inputUsername").focus();
             return;
         }
         $.getJSON("${contextPath}/checkUserName", { name: name }, function(json){
@@ -96,7 +95,6 @@
                 $("#showUserNameMsg").html("");
             }else{
                 $("#showUserNameMsg").html(json.message).css("color","red");
-                $("#inputUsername").focus();
             }
         });
     };
@@ -105,7 +103,6 @@
             var password = $("#inputPassword").val().trim();
             if(password == ""){
                 $("#showPasswordMsg").html("密码不能为空").css("color","red");
-                $("#inputPassword").focus();
                 return;
             }
             $.getJSON("${contextPath}/validatePassword", { password: password }, function(json){
@@ -113,7 +110,6 @@
                     $("#showPasswordMsg").html("");
                 }else{
                     $("#showPasswordMsg").html(json.message).css("color","red");
-                    $("#inputPassword").focus();
                 }
             });
         };
@@ -122,7 +118,6 @@
             var email = $("#inputEmail").val().trim();
             if(email == ""){
                  $("#showEmailMsg").html("Email不能为空").css("color","red");
-                 $("#inputEmail").focus();
                  return;
             }
            $.getJSON("${contextPath}/validateEmail", { email: email }, function(json){
@@ -130,7 +125,6 @@
                    $("#showEmailMsg").html("");
                }else{
                    $("#showEmailMsg").html(json.message).css("color","red");
-                   $("#inputEmail").focus();
                }
            });
 
@@ -141,7 +135,6 @@
             var phoneNumber = $("#inputPhoneNumber").val().trim();
             if(phoneNumber == ""){
                  $("#showPhoneNumberMsg").html("手机号码不能为空").css("color","red");
-                 $("#inputPhoneNumber").focus();
                  return;
             }
            $.getJSON("${contextPath}/validatePhoneNumber", { phoneNumber: phoneNumber }, function(json){
@@ -149,7 +142,6 @@
                    $("#showPhoneNumberMsg").html("");
                }else{
                    $("#showPhoneNumberMsg").html(json.message).css("color","red");
-                   $("#inputPhoneNumber").focus();
                }
            });
        };

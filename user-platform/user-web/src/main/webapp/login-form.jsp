@@ -62,7 +62,6 @@
         var name = $("#inputUsername").val().trim();
         if(name == ""){
             $("#showUserNameMsg").html("用户名不能为空").css("color","red");
-            $("#inputUsername").focus();
         }else{
             $("#showUserNameMsg").html("");
         }
@@ -72,7 +71,6 @@
             var password = $("#inputPassword").val().trim();
             if(password == ""){
                 $("#showPasswordMsg").html("密码不能为空").css("color","red");
-                $("#inputPassword").focus();
             }else{
                 $("#showPasswordMsg").html("");
             }
