@@ -12,11 +12,11 @@ import org.geektimes.util.MD5Utils;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 
@@ -42,15 +42,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     // 默认需要事务
-    //@LocalTransactional
+    @LocalTransactional
     public boolean register(User user) {
         if(user == null){
             return false;
         }
         String password = MD5Utils.getSaltMD5(user.getPassword(),SALT);
         user.setPassword(password);
-        return userRepository.save(user);
-        //entityManager.persist(user);
+        //return userRepository.save(user);
+        EntityTransaction entityTransaction =  entityManager.getTransaction();
+        entityTransaction.begin();
+        entityManager.persist(user);
+        entityTransaction.commit();
+        return true;
         // 调用其他方法方法
         //update(user); // 涉及事务
         // register 方法和 update 方法存在于同一线程
@@ -95,25 +99,37 @@ public class UserServiceImpl implements UserService {
     public boolean update(User user) {
         String password = MD5Utils.getSaltMD5(user.getPassword(),SALT);
         user.setPassword(password);
-        return userRepository.update(user);
+        entityManager.merge(user);
+        return true;
+        //return userRepository.update(user);
     }
 
     @Override
     public User queryUserById(Long id) {
-       return userRepository.getById(id);
+        return entityManager.find(User.class,id);
+       //return userRepository.getById(id);
     }
 
     @Override
     public User queryUserByNameAndPassword(String name, String password) {
         password = MD5Utils.getSaltMD5(password,SALT);
-        return userRepository.getByNameAndPassword(name,password);
+        List<User> users = entityManager.createQuery("select u from User u where u.name = :name and u.password = :password",User.class)
+                .setParameter("name",name).setParameter("password",password).getResultList();
+        if(users != null && !users.isEmpty()){
+            return users.get(0);
+        }
+        return null;
+        //return userRepository.getByNameAndPassword(name,password);
         //return entityManager.find()
     }
 
     @Override
     public boolean checkUserName(String name) {
-        User user = userRepository.getByName(name);
-        if(user == null){
+        List<User> users = entityManager.createQuery("select u from User u where u.name = :name",User.class)
+                        .setParameter("name",name)
+                        .getResultList();
+        //User user = userRepository.getByName(name);
+        if(users == null || users.isEmpty()){
             return true;
         }
         return false;
