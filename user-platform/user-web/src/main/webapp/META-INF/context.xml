@@ -15,13 +15,22 @@
 	Tomcat JNDI : http://tomcat.apache.org/tomcat-7.0-doc/jndi-resources-howto.html
 	-->
 
-	<Resource name="jdbc/mysql"
-			  type="javax.sql.DataSource"  auth="Container"
-			  description="mysql database for User Platform"
-			  maxActive="100" maxIdle="30" maxWait="10000"
-			  username="tycacl" password="zxcvbnM87"
-			  driverClassName="com.mysql.cj.jdbc.Driver"
-			  url="jdbc:mysql://test-ty-fzpb.mysql.rds.aliyuncs.com:3306/test_user?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false"/>
+		<Resource name="jdbc/dataSource"
+	              type="javax.sql.DataSource"  auth="Container"
+	              description="Derby database for User Platform"
+	              maxActive="100" maxIdle="30" maxWait="10000"
+	              username="" password=""
+	              driverClassName="org.apache.derby.jdbc.EmbeddedDriver"
+	              url="jdbc:derby:db/user-platform;create=true"/>
+
+
+<!--	<Resource name="jdbc/dataSource"-->
+<!--			  type="javax.sql.DataSource"  auth="Container"-->
+<!--			  description="mysql database for User Platform"-->
+<!--			  maxActive="100" maxIdle="30" maxWait="10000"-->
+<!--			  username="tycacl" password="zxcvbnM87"-->
+<!--			  driverClassName="com.mysql.cj.jdbc.Driver"-->
+<!--			  url="jdbc:mysql://test-ty-fzpb.mysql.rds.aliyuncs.com:3306/test_user?serverTimezone=UTC&amp;useUnicode=true&amp;characterEncoding=utf8&amp;useSSL=false"/>-->
 
 	<!-- FactoryBean -->
 	<Resource name="bean/DBConnectionManager" auth="Container"

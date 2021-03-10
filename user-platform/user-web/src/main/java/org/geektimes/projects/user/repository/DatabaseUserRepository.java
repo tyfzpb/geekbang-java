@@ -231,6 +231,13 @@ public class DatabaseUserRepository implements UserRepository {
             return preparedStatement.executeUpdate();
         }catch (Throwable e) {
             new RuntimeException(e);
+        }finally {
+            try {
+                connection.close();
+                connection = null;
+            }catch (Throwable e) {
+                new RuntimeException(e);
+            }
         }
         return 0;
     }
@@ -267,6 +274,13 @@ public class DatabaseUserRepository implements UserRepository {
             return function.apply(resultSet);
         } catch (Throwable e) {
             exceptionHandler.accept(e);
+        }finally {
+            try {
+                connection.close();
+                connection = null;
+            }catch (Throwable e) {
+                exceptionHandler.accept(e);
+            }
         }
         return null;
     }

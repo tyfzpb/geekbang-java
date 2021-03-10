@@ -8,6 +8,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -20,13 +24,21 @@ public class TestingListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        initUsersTable();
+    }
+
+    private void initUsersTable() {
         ComponentContext context = ComponentContext.getInstance();
         DBConnectionManager dbConnectionManager = context.getComponent("bean/DBConnectionManager");
-        dbConnectionManager.getConnection();
-        testUser(dbConnectionManager.getEntityManager());
-        logger.info("所有的 JNDI 组件名称：[");
-        context.getComponentNames().forEach(logger::info);
-        logger.info("]");
+        Connection connection = dbConnectionManager.getConnection();
+        Statement statement = null;
+        try{
+            statement = connection.createStatement();
+            //statement.execute(DBConnectionManager.DROP_USERS_TABLE_DDL_SQL);
+            statement.execute(DBConnectionManager.CREATE_USERS_TABLE_DDL_SQL);
+        }catch (SQLException e){
+            logger.log(Level.SEVERE,e.getMessage());
+        }
     }
 
     private void testUser(EntityManager entityManager) {

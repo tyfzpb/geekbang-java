@@ -15,11 +15,12 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+
 public class DBConnectionManager { // JNDI Component
 
     private final Logger logger = Logger.getLogger(DBConnectionManager.class.getName());
 
-    @Resource(name = "jdbc/mysql")
+    @Resource(name = "jdbc/dataSource")
     private DataSource dataSource;
 
     @Resource(name = "bean/EntityManager")
