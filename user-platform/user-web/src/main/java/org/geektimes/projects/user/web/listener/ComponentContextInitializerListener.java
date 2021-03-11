@@ -1,7 +1,7 @@
 package org.geektimes.projects.user.web.listener;
 
 import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
-import org.geektimes.context.ComponentContext;
+import org.geektimes.web.mvc.context.ComponentContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -17,7 +17,7 @@ public class ComponentContextInitializerListener implements ServletContextListen
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        AbandonedConnectionCleanupThread.uncheckedShutdown();
+        //AbandonedConnectionCleanupThread.uncheckedShutdown();
         this.servletContext = sce.getServletContext();
         ComponentContext context = new ComponentContext();
         context.init(servletContext);

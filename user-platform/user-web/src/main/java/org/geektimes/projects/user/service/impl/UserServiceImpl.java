@@ -8,12 +8,15 @@ import org.geektimes.projects.user.sql.DBConnectionManager;
 import org.geektimes.projects.user.sql.LocalTransactional;
 import org.geektimes.projects.user.validator.bean.validation.group.UpdateGroup;
 import org.geektimes.util.MD5Utils;
+import org.hibernate.annotations.NamedQuery;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 import javax.validation.Validator;
 import java.util.Collection;
 import java.util.List;
@@ -47,13 +50,33 @@ public class UserServiceImpl implements UserService {
         if(user == null){
             return false;
         }
-        String password = MD5Utils.getSaltMD5(user.getPassword(),SALT);
+        String password = MD5Utils.getMD5Hex(user.getPassword(),SALT);
         user.setPassword(password);
         //return userRepository.save(user);
         EntityTransaction entityTransaction =  entityManager.getTransaction();
         entityTransaction.begin();
-        entityManager.persist(user);
+        try {
+            entityManager.persist(user);
+        }catch(ConstraintViolationException cve){
+            Set<ConstraintViolation<?>> cvs = cve.getConstraintViolations();
+            for (ConstraintViolation<?> cv : cvs) {
+                System.out.println("------------------------------------------------");
+                System.out.println("Violation: " + cv.getMessage());
+                System.out.println("Entity: " + cv.getRootBeanClass().getSimpleName());
+                // The violation occurred on a leaf bean (embeddable)
+                if (cv.getLeafBean() != null && cv.getRootBean() != cv.getLeafBean()) {
+                    System.out.println("Embeddable: " + cv.getLeafBean().getClass().getSimpleName());
+                }
+                System.out.println("Attribute: " + cv.getPropertyPath());
+                System.out.println("Invalid value: " + cv.getInvalidValue());
+            }
+            //TODO
+            return false;
+
+        }
         entityTransaction.commit();
+
+
         return true;
         // 调用其他方法方法
         //update(user); // 涉及事务
@@ -97,7 +120,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean update(User user) {
-        String password = MD5Utils.getSaltMD5(user.getPassword(),SALT);
+        String password = MD5Utils.getMD5Hex(user.getPassword(),SALT);
         user.setPassword(password);
         entityManager.merge(user);
         return true;
@@ -112,7 +135,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User queryUserByNameAndPassword(String name, String password) {
-        password = MD5Utils.getSaltMD5(password,SALT);
+        password = MD5Utils.getMD5Hex(password,SALT);
         List<User> users = entityManager.createQuery("select u from User u where u.name = :name and u.password = :password",User.class)
                 .setParameter("name",name).setParameter("password",password).getResultList();
         if(users != null && !users.isEmpty()){

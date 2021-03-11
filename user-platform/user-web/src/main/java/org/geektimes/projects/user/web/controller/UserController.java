@@ -1,18 +1,14 @@
 package org.geektimes.projects.user.web.controller;
 
 import org.apache.commons.lang.StringUtils;
-import org.geektimes.context.ComponentContext;
+import org.geektimes.web.mvc.context.ComponentContext;
 import org.geektimes.projects.user.domain.User;
 import org.geektimes.projects.user.service.UserService;
-import org.geektimes.projects.user.service.impl.UserServiceImpl;
 import org.geektimes.projects.user.validator.bean.validation.ValidationResult;
 import org.geektimes.projects.user.validator.bean.validation.ValidationUtils;
-import org.geektimes.web.mvc.controller.PageController;
 import org.geektimes.web.mvc.controller.RestController;
 
-import javax.management.remote.rmi._RMIConnection_Stub;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.annotation.Resource;
 import javax.validation.groups.Default;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -23,7 +19,8 @@ import java.util.Map;
 
 public class UserController implements RestController {
 
-    private UserService userService = ComponentContext.getInstance().getComponent("bean/UserService");
+    @Resource(name="bean/UserService")
+    private UserService userService;
 
     @GET
     @POST
@@ -46,12 +43,12 @@ public class UserController implements RestController {
             return result;
         }
         //校验字段合法性
-        Map<String,String> validationResult = validateSaveUser(user);
-        if(validationResult != null){
-            result.put("code", 0);
-            result.put("message", validationResult);
-            return result;
-        }
+//        Map<String,String> validationResult = validateSaveUser(user);
+//        if(validationResult != null){
+//            result.put("code", 0);
+//            result.put("message", validationResult);
+//            return result;
+//        }
         //注册
         flag = userService.register(user);
         if(flag){

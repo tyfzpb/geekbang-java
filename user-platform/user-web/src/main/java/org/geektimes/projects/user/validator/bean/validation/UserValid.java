@@ -1,6 +1,9 @@
 package org.geektimes.projects.user.validator.bean.validation;
 
+import org.geektimes.projects.user.validator.bean.validation.group.UpdateGroup;
+
 import javax.validation.Constraint;
+import javax.validation.GroupSequence;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

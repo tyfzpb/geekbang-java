@@ -3,12 +3,14 @@ package org.geektimes.web.mvc;
 import com.alibaba.fastjson.JSONObject;
 import jdk.nashorn.internal.runtime.JSONFunctions;
 import org.apache.commons.lang.StringUtils;
+import org.geektimes.web.mvc.context.ComponentContext;
 import org.geektimes.web.mvc.controller.Controller;
 import org.geektimes.web.mvc.controller.PageController;
 import org.geektimes.web.mvc.controller.RestController;
 import org.geektimes.web.mvc.header.CacheControlHeaderWriter;
 import org.geektimes.web.mvc.header.annotation.CacheControl;
 
+import javax.annotation.Resource;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -45,20 +47,24 @@ public class FrontControllerServlet extends HttpServlet {
      */
     private Map<String, HandlerMethodInfo> handleMethodInfoMapping = new HashMap<>();
 
+    private ComponentContext context = null;
+
     /**
      * 初始化 Servlet
      *
      * @param servletConfig
      */
     public void init(ServletConfig servletConfig) {
-        initHandleMethods();
+        ComponentContext context = (ComponentContext)servletConfig.getServletContext().getAttribute(ComponentContext.class.getName());
+        initHandleMethods(context);
     }
 
     /**
      * 读取所有的 RestController 的注解元信息 @Path
      * 利用 ServiceLoader 技术（Java SPI）
      */
-    private void initHandleMethods() {
+    private void initHandleMethods(ComponentContext context) {
+        this.context = context;
         for (Controller controller : ServiceLoader.load(Controller.class)) {
             Class<?> controllerClass = controller.getClass();
             Path pathFromClass = controllerClass.getAnnotation(Path.class);
@@ -76,8 +82,25 @@ public class FrontControllerServlet extends HttpServlet {
                         new HandlerMethodInfo(path, method, supportedHttpMethods));
                 controllersMapping.put(path, controller);
             }
-
+            injectControllerField(controller);
         }
+    }
+
+    /**
+     * 注入Cotroller 字段
+     * @param controller
+     */
+    private void injectControllerField(Controller controller){
+        Arrays.stream(controller.getClass().getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(Resource.class))
+                .forEach(field -> {
+                    field.setAccessible(true);
+                    try {
+                        field.set(controller, context.getComponent(field.getAnnotation(Resource.class).name()));
+                    }catch (IllegalAccessException e){
+                        new RuntimeException(e);
+                    }
+                });
     }
 
 

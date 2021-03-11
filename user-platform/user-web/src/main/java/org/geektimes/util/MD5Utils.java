@@ -1,5 +1,7 @@
 package org.geektimes.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -67,13 +69,44 @@ public class MD5Utils {
         }
     }
 
+    /**
+     * 生成含有固定盐的密码
+     *
+     * @param password  要加密的密码
+     * @param salt 盐
+     * @return 32位的密码
+     */
+    public static String getMD5Hex(String password,String salt){
+        if(StringUtils.isEmpty(password)){
+            return null;
+        }
+        StringBuilder stringBuilder = new StringBuilder(password);
+        int p = password.length();
+        int s = salt.length();
+        stringBuilder.insert(0,salt.substring(0,s/3)).insert(p/2 + s/3,salt.substring(s/3,2*s/3));
+        stringBuilder.append(salt.substring(2*s/3,s));
+        return md5Hex(stringBuilder.toString());
+    }
+
+
+    /**
+     *  验证含有固定盐的密码
+     * @param password 密码
+     * @param salt 盐
+     * @param md5str 32位字符串密文
+     * @return
+     */
+    public static boolean getSaltverifyMD5Hex(String password,String salt,String md5str){
+        String md5Hex = getMD5Hex(password,salt);
+        return md5Hex.equals(md5str);
+    }
 
     /**
      * 生成含有固定盐的密码
      *
      * @param password  要加密的密码
      * @param salt 盐
-     * @return
+     * @return 40位的密码
      */
     public static String getSaltMD5(String password,String salt){
         StringBuilder sBuilder = new StringBuilder(salt);
@@ -84,7 +117,7 @@ public class MD5Utils {
             }
             salt = sBuilder.toString();
         }else{
-            salt = sBuilder.substring(0,15);
+            salt = sBuilder.substring(0,16);
         }
         password = md5Hex(password + salt);
         char[] cs = new char[48];
@@ -128,7 +161,7 @@ public class MD5Utils {
      *
      * @param password 原密码
      *
-     * @param password 加密之后的密码
+     * @param password 加密之后的密码  40位字符串
      *
      *@return boolean true表示和原密码一致   false表示和原密码不一致
      */
@@ -195,8 +228,10 @@ public class MD5Utils {
             for (int i = 0; i < 16 - len; i++) {
                 sBuilder.append("0");
             }
+            salt = sBuilder.toString();
+        }else{
+            salt = sBuilder.substring(0,16);
         }
-        salt = sBuilder.toString();
         password = md5AndSha(password + salt);
         char[] cs = new char[48];
         for (int i = 0; i < 48; i += 3) {
@@ -275,14 +310,19 @@ public class MD5Utils {
 
     public static void main(String[] args) {
         // 原密码
-        String plaintext = "asdsfsdlfwer23323";
+        String plaintext = "adfdsfsdfsd";
+        String salt = "ty";
 
         // 获取加盐后的MD5值
-        String ciphertext = MD5Utils.getSaltMD5(plaintext,"454343");
+        String ciphertext = MD5Utils.getSaltMD5(plaintext,salt);
         System.out.println("加盐后MD5：" + ciphertext);
-        System.out.println("加盐后MD5：" + MD5Utils.getSaltMD5(plaintext,"454343"));
+        System.out.println("加盐后MD5：" + MD5Utils.getSaltMD5(plaintext,salt));
         System.out.println("是否是同一字符串:" + MD5Utils.getSaltverifyMD5(plaintext, ciphertext));
 
+
+        String md5Hex = getMD5Hex(plaintext,salt);
+        System.out.println("getMD5Hex：" + md5Hex);
+        System.out.println("是否是同一字符串：" + MD5Utils.getSaltverifyMD5Hex(plaintext,salt,md5Hex));
     }
 
 }
