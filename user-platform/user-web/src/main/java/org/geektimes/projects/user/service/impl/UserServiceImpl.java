@@ -20,6 +20,7 @@ import javax.validation.ValidationException;
 import javax.validation.Validator;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -151,6 +152,8 @@ public class UserServiceImpl implements UserService {
         List<User> users = entityManager.createQuery("select u from User u where u.name = :name",User.class)
                         .setParameter("name",name)
                         .getResultList();
+//        Optional<List<User>> optionalUsers = Optional.ofNullable(users);
+//        return optionalUsers.isPresent();
         //User user = userRepository.getByName(name);
         if(users == null || users.isEmpty()){
             return true;
