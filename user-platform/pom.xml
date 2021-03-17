@@ -47,6 +47,10 @@
 
         <jolokia.version>1.6.2</jolokia.version>
 
+        <junit-jupiter-engine.version>5.7.1</junit-jupiter-engine.version>
+        <junit-vintage-vintage.version>5.7.1</junit-vintage-vintage.version>
+        <junit-platform-launcher.version>1.7.1</junit-platform-launcher.version>
+
         <!-- Maven Plugins 版本 -->
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <maven.source.version>3.2.1</maven.source.version>
@@ -56,6 +60,7 @@
         <maven.flatten.version>1.2.5</maven.flatten.version>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
     </properties>
 
     <!-- Artifacts 依赖版本管理 -->
@@ -140,6 +145,26 @@
                 <groupId>org.jolokia</groupId>
                 <artifactId>jolokia-core</artifactId>
                 <version>${jolokia.version}</version>
+            </dependency>
+
+            <!-- junit -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit-jupiter-engine.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-launcher</artifactId>
+                <version>${junit-platform-launcher.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>${junit-vintage-vintage.version}</version>
+                <scope>test</scope>
             </dependency>
 
         </dependencies>
@@ -244,6 +269,20 @@
                     </execution>
                 </executions>
             </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe-plugin.version}</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <application-name>user-platform</application-name>
+                        <application-version>1.0</application-version>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 

@@ -23,4 +23,4 @@ org.geektimes.projects.user.web.listener.TestingListener#registerMBan
   - 应用名称 property name = "application.name"
     
 代码路径：org/geektimes/configuration/microprofile/config
-测试入口：org.geektimes.Test
+测试入口：test.org.geektimes.configuration.microprofile.config.TestJavaConfig

@@ -23,9 +23,8 @@ public class Test {
         // 外部文件
         System.out.println(config.getValue("application.name",String.class));
         System.out.println(config.getValue("java-config.verison",int.class));
-
         // java 系统属性
-        System.out.println(config.getValue("appName",String.class));
+        System.out.println(config.getValue("revision",String.class));
 
     }
 
