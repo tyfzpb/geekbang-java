@@ -23,6 +23,9 @@
     <modules>
         <module>my-web-mvc</module>
         <module>user-web</module>
+        <module>my-configuration</module>
+        <module>my-depedency-injection</module>
+        <module>my-core</module>
     </modules>
 
 
@@ -35,6 +38,7 @@
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
         <javax.annotation.version>1.2</javax.annotation.version>
+        <javax.inject.version>1</javax.inject.version>
         <jstl.version>1.2</jstl.version>
         <commons-lang.version>2.6</commons-lang.version>
         <commons-validator.version>1.7</commons-validator.version>
@@ -138,6 +142,11 @@
                 <groupId>javax.annotation</groupId>
                 <artifactId>javax.annotation-api</artifactId>
                 <version>${javax.annotation.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.inject</groupId>
+                <artifactId>javax.inject</artifactId>
+                <version>${javax.inject.version}</version>
             </dependency>
 
             <!-- jolokia -->
@@ -278,7 +287,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <application-name>user-platform</application-name>
-                        <application-version>1.0</application-version>
+                        <application-version>1.1</application-version>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

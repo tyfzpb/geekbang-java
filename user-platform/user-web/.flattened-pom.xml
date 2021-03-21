@@ -19,6 +19,21 @@
       <version>${revision}</version>
     </dependency>
     <dependency>
+      <groupId>org.geekbang.projects</groupId>
+      <artifactId>my-configuration</artifactId>
+      <version>${revision}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geekbang.projects</groupId>
+      <artifactId>my-depedency-injection</artifactId>
+      <version>${revision}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geekbang.projects</groupId>
+      <artifactId>my-core</artifactId>
+      <version>${revision}</version>
+    </dependency>
+    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
@@ -74,6 +89,10 @@
     <dependency>
       <groupId>javax.annotation</groupId>
       <artifactId>javax.annotation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
     </dependency>
     <dependency>
       <groupId>org.jolokia</groupId>

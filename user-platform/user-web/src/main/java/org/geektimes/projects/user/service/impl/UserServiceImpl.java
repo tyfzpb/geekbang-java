@@ -7,8 +7,7 @@ import org.geektimes.projects.user.service.UserService;
 import org.geektimes.projects.user.sql.DBConnectionManager;
 import org.geektimes.projects.user.sql.LocalTransactional;
 import org.geektimes.projects.user.validator.bean.validation.group.UpdateGroup;
-import org.geektimes.util.MD5Utils;
-import org.hibernate.annotations.NamedQuery;
+import org.geetimes.util.MD5Utils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -16,11 +15,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
 import javax.validation.Validator;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 

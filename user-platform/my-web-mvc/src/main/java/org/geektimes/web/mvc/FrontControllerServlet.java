@@ -1,26 +1,20 @@
 package org.geektimes.web.mvc;
 
 import com.alibaba.fastjson.JSONObject;
-import jdk.nashorn.internal.runtime.JSONFunctions;
 import org.apache.commons.lang.StringUtils;
-import org.geektimes.web.mvc.context.ComponentContext;
+import org.geektimes.di.context.ComponentContext;
 import org.geektimes.web.mvc.controller.Controller;
 import org.geektimes.web.mvc.controller.PageController;
 import org.geektimes.web.mvc.controller.RestController;
-import org.geektimes.web.mvc.header.CacheControlHeaderWriter;
-import org.geektimes.web.mvc.header.annotation.CacheControl;
 
 import javax.annotation.Resource;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import java.beans.BeanInfo;
@@ -40,12 +34,12 @@ public class FrontControllerServlet extends HttpServlet {
     /**
      * 请求路径和 Controller 的映射关系缓存
      */
-    private Map<String, Controller> controllersMapping = new HashMap<>();
+    private final Map<String, Controller> controllersMapping = new HashMap<>();
 
     /**
      * 请求路径和 {@link HandlerMethodInfo} 映射关系缓存
      */
-    private Map<String, HandlerMethodInfo> handleMethodInfoMapping = new HashMap<>();
+    private final Map<String, HandlerMethodInfo> handleMethodInfoMapping = new HashMap<>();
 
     private ComponentContext context = null;
 
@@ -55,25 +49,25 @@ public class FrontControllerServlet extends HttpServlet {
      * @param servletConfig
      */
     public void init(ServletConfig servletConfig) {
-        ComponentContext context = (ComponentContext)servletConfig.getServletContext().getAttribute(ComponentContext.class.getName());
-        initHandleMethods(context);
+        ComponentContext context = (ComponentContext) servletConfig.getServletContext().getAttribute(ComponentContext.class.getName());
+        this.context = context;
+        initHandleMethods();
     }
 
     /**
      * 读取所有的 RestController 的注解元信息 @Path
      * 利用 ServiceLoader 技术（Java SPI）
      */
-    private void initHandleMethods(ComponentContext context) {
-        this.context = context;
+    private void initHandleMethods() {
         for (Controller controller : ServiceLoader.load(Controller.class)) {
             Class<?> controllerClass = controller.getClass();
             Path pathFromClass = controllerClass.getAnnotation(Path.class);
-            String requestPath = Objects.isNull(pathFromClass)? "" : pathFromClass.value();
+            String requestPath = Objects.isNull(pathFromClass) ? "" : pathFromClass.value();
             Method[] publicMethods = controllerClass.getMethods();
             // 处理方法支持的 HTTP 方法集合
             for (Method method : publicMethods) {
                 Path pathFromMethod = method.getAnnotation(Path.class);
-                if(pathFromMethod == null){
+                if (pathFromMethod == null) {
                     continue;
                 }
                 String path = requestPath + pathFromMethod.value();
@@ -88,21 +82,21 @@ public class FrontControllerServlet extends HttpServlet {
 
     /**
      * 注入Cotroller 字段
+     *
      * @param controller
      */
-    private void injectControllerField(Controller controller){
+    private void injectControllerField(Controller controller) {
         Arrays.stream(controller.getClass().getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(Resource.class))
                 .forEach(field -> {
                     field.setAccessible(true);
                     try {
-                        field.set(controller, context.getComponent(field.getAnnotation(Resource.class).name()));
-                    }catch (IllegalAccessException e){
+                        field.set(controller, this.context.getComponent(field.getAnnotation(Resource.class).name()));
+                    } catch (IllegalAccessException e) {
                         new RuntimeException(e);
                     }
                 });
     }
-
 
 
     /**
@@ -175,15 +169,15 @@ public class FrontControllerServlet extends HttpServlet {
 
                         Object[] paramValues = new Object[handlerMethod.getParameterCount()];
                         for (int i = 0; i < methodParameters.length; i++) {
-                            if (HttpServletRequest.class == methodParameters[i].getType()){
+                            if (HttpServletRequest.class == methodParameters[i].getType()) {
                                 paramValues[i] = request;
                                 continue;
                             }
-                            if (HttpServletResponse.class == methodParameters[i].getType()){
+                            if (HttpServletResponse.class == methodParameters[i].getType()) {
                                 paramValues[i] = response;
                                 continue;
                             }
-                            if (Integer.class == methodParameters[i].getType()){
+                            if (Integer.class == methodParameters[i].getType()) {
                                 paramValues[i] = Integer.valueOf(Arrays.toString(parameterMap.get(methodParameters[i].getName()))
                                         .replaceAll("\\[|\\]", "").replaceAll("\\s", ""));
                                 continue;
@@ -197,17 +191,17 @@ public class FrontControllerServlet extends HttpServlet {
                             PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
                             for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
                                 String name = propertyDescriptor.getName();
-                                if (parameterMap.containsKey(name)){
+                                if (parameterMap.containsKey(name)) {
                                     String value = Arrays.toString(parameterMap.get(name))
                                             .replaceAll("\\[|\\]", "").replaceAll("\\s", "");
 
                                     Method writeMethod = propertyDescriptor.getWriteMethod();
 
-                                    if (Integer.class == propertyDescriptor.getPropertyType()){
+                                    if (Integer.class == propertyDescriptor.getPropertyType()) {
                                         writeMethod.invoke(instance, Integer.valueOf(value));
                                     }
 
-                                    if (String.class == propertyDescriptor.getPropertyType()){
+                                    if (String.class == propertyDescriptor.getPropertyType()) {
                                         writeMethod.invoke(instance, value);
                                     }
                                 }

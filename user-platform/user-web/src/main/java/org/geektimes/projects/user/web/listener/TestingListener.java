@@ -1,7 +1,7 @@
 package org.geektimes.projects.user.web.listener;
 
+import org.geektimes.di.context.ComponentContext;
 import org.geektimes.projects.user.management.UserManager;
-import org.geektimes.web.mvc.context.ComponentContext;
 import org.geektimes.projects.user.domain.User;
 import org.geektimes.projects.user.sql.DBConnectionManager;
 

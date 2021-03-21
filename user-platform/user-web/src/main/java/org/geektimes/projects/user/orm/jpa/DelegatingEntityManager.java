@@ -1,6 +1,6 @@
 package org.geektimes.projects.user.orm.jpa;
 
-import org.geektimes.web.mvc.context.ComponentContext;
+import org.geektimes.di.context.ComponentContext;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.*;
@@ -28,11 +28,11 @@ public class DelegatingEntityManager implements EntityManager {
 
     @PostConstruct
     public void init() {
-         this.entityManagerFactory =
+        this.entityManagerFactory =
                 Persistence.createEntityManagerFactory(persistenceUnitName, loadProperties(propertiesLocation));
     }
-    
-    protected EntityManager getEntityManager(){
+
+    protected EntityManager getEntityManager() {
         return this.entityManagerFactory.createEntityManager();
     }
 
@@ -119,13 +119,13 @@ public class DelegatingEntityManager implements EntityManager {
     }
 
     @Override
-    public void setFlushMode(FlushModeType flushMode) {
-        getEntityManager().setFlushMode(flushMode);
+    public FlushModeType getFlushMode() {
+        return getEntityManager().getFlushMode();
     }
 
     @Override
-    public FlushModeType getFlushMode() {
-        return getEntityManager().getFlushMode();
+    public void setFlushMode(FlushModeType flushMode) {
+        getEntityManager().setFlushMode(flushMode);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.geektimes.projects.user.web.listener;
 
-import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
-import org.geektimes.web.mvc.context.ComponentContext;
+import org.geektimes.di.context.ComponentContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
