@@ -1,25 +1,22 @@
-package org.geektimes.projects.user.web.listener;
+package org.geektimes.di.servlet;
 
 import org.geektimes.di.context.ComponentContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 /**
- * {@link ComponentContext} 初始化器
+ * {@link ComponentContext}
  * ContextLoaderListener
  */
 public class ComponentContextInitializerListener implements ServletContextListener {
 
-    private ServletContext servletContext;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        //AbandonedConnectionCleanupThread.uncheckedShutdown();
-        this.servletContext = sce.getServletContext();
-        ComponentContext context = new ComponentContext();
-        context.init(servletContext);
+
     }
 
     @Override

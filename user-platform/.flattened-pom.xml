@@ -10,27 +10,38 @@
   <modules>
     <module>my-web-mvc</module>
     <module>user-web</module>
+    <module>my-configuration</module>
+    <module>my-depedency-injection</module>
+    <module>my-core</module>
   </modules>
   <properties>
+    <microprofile-config-api.version>2.0</microprofile-config-api.version>
+    <junit-platform-launcher.version>1.7.1</junit-platform-launcher.version>
     <commons-validator.version>1.7</commons-validator.version>
     <maven.flatten.version>1.2.5</maven.flatten.version>
     <hibernate.version>5.4.29.Final</hibernate.version>
     <maven.jar.version>3.2.0</maven.jar.version>
     <maven.source.version>3.2.1</maven.source.version>
     <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
+    <javax.inject.version>1</javax.inject.version>
     <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
     <project.build.sourceEncoding>${file.encoding}</project.build.sourceEncoding>
     <revision>v1-SNAPSHOT</revision>
     <maven.compiler.source>8</maven.compiler.source>
+    <javax.annotation.version>1.2</javax.annotation.version>
     <maven.deploy.version>2.8.2</maven.deploy.version>
     <maven.war.version>3.3.1</maven.war.version>
+    <junit-vintage-vintage.version>5.7.1</junit-vintage-vintage.version>
     <maven.compiler.target>8</maven.compiler.target>
     <maven.compiler.version>3.8.1</maven.compiler.version>
+    <junit-jupiter-engine.version>5.7.1</junit-jupiter-engine.version>
+    <maven-failsafe-plugin.version>3.0.0-M5</maven-failsafe-plugin.version>
     <jstl.version>1.2</jstl.version>
     <hibernate.validator.version>6.0.0.Final</hibernate.validator.version>
     <commons-lang.version>2.6</commons-lang.version>
     <derby.version>10.14.2.0</derby.version>
     <file.encoding>UTF-8</file.encoding>
+    <jolokia.version>1.6.2</jolokia.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -79,24 +90,53 @@
         <artifactId>hibernate-validator</artifactId>
         <version>${hibernate.validator.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.eclipse.microprofile.config</groupId>
+        <artifactId>microprofile-config-api</artifactId>
+        <version>${microprofile-config-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>javax.annotation-api</artifactId>
+        <version>${javax.annotation.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.inject</groupId>
+        <artifactId>javax.inject</artifactId>
+        <version>${javax.inject.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jolokia</groupId>
+        <artifactId>jolokia-core</artifactId>
+        <version>${jolokia.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter-engine</artifactId>
+        <version>${junit-jupiter-engine.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.platform</groupId>
+        <artifactId>junit-platform-launcher</artifactId>
+        <version>${junit-platform-launcher.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.junit.vintage</groupId>
+        <artifactId>junit-vintage-engine</artifactId>
+        <version>${junit-vintage-vintage.version}</version>
+        <scope>test</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <pluginRepositories>
     <pluginRepository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
       <id>alfresco-public</id>
       <url>https://artifacts.alfresco.com/nexus/content/repositories/public</url>
-    </pluginRepository>
-    <pluginRepository>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>daily</updatePolicy>
-      </snapshots>
-      <id>alfresco-public-snapshots</id>
-      <url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>beardedgeeks-releases</id>
-      <url>https://repo.maven.apache.org/maven2</url>
     </pluginRepository>
   </pluginRepositories>
   <build>
@@ -183,6 +223,16 @@
         <configuration>
           <updatePomFile>true</updatePomFile>
           <flattenMode>resolveCiFriendliesOnly</flattenMode>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${maven-failsafe-plugin.version}</version>
+        <configuration>
+          <systemPropertyVariables>
+            <application-name>user-platform</application-name>
+            <application-version>1.1</application-version>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>

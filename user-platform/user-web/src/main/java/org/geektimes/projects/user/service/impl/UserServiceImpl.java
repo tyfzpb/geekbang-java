@@ -12,6 +12,7 @@ import org.geetimes.util.MD5Utils;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -50,8 +51,8 @@ public class UserServiceImpl implements UserService {
         String password = MD5Utils.getMD5Hex(user.getPassword(),SALT);
         user.setPassword(password);
         //return userRepository.save(user);
-        EntityTransaction entityTransaction =  entityManager.getTransaction();
-        entityTransaction.begin();
+        entityManager = entityManager.getEntityManagerFactory().createEntityManager();
+        entityManager.getTransaction().begin();
         try {
             entityManager.persist(user);
         }catch(ConstraintViolationException cve){
@@ -71,8 +72,8 @@ public class UserServiceImpl implements UserService {
             return false;
 
         }
-        entityTransaction.commit();
 
+        entityManager.getTransaction().commit();
 
         return true;
         // 调用其他方法方法

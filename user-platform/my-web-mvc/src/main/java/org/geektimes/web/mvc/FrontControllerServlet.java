@@ -49,7 +49,7 @@ public class FrontControllerServlet extends HttpServlet {
      * @param servletConfig
      */
     public void init(ServletConfig servletConfig) {
-        ComponentContext context = (ComponentContext) servletConfig.getServletContext().getAttribute(ComponentContext.class.getName());
+        ComponentContext context = (ComponentContext) servletConfig.getServletContext().getAttribute(ComponentContext.CONTEXT_NAME);
         this.context = context;
         initHandleMethods();
     }

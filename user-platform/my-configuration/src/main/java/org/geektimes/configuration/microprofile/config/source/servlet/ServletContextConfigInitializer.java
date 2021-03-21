@@ -8,6 +8,7 @@ import org.geetimes.util.ThreadLocalUtil;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 /**
  * 如何注册当前 ServletContextListener 实现
@@ -19,31 +20,7 @@ public class ServletContextConfigInitializer implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        ServletContext servletContext = servletContextEvent.getServletContext();
-        ServletContextConfigSource servletContextConfigSource = new ServletContextConfigSource(servletContext);
-        // 获取当前 ClassLoader
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        ConfigProviderResolver configProviderResolver = ConfigProviderResolver.instance();
-        // Config config = configProviderResolver.getConfig(classLoader);
-        ConfigBuilder configBuilder = configProviderResolver.getBuilder();
-        // 配置 ClassLoader
-        configBuilder.forClassLoader(classLoader);
-        // 默认配置源（内建的，静态的）
-        configBuilder.addDefaultSources();
-        // 通过发现配置源（动态的）
-        configBuilder.addDiscoveredSources();
-        // 通过发现配置转换器（动态的）
-        configBuilder.addDiscoveredConverters();
-        // 增加扩展配置源（基于 Servlet 引擎）
-        configBuilder.withSources(servletContextConfigSource);
-        // 获取 Config
-        Config config = configBuilder.build();
-        // 注册 Config 关联到当前 ClassLoader
-        configProviderResolver.registerConfig(config, classLoader);
-        ThreadLocal<Config> configThreadLocal = new ThreadLocal<>();
-        configThreadLocal.set(config);
-        servletContext.setAttribute(Config.class.getName(), config);
-        ThreadLocalUtil.set(Config.class.getName(), config);
+
     }
 
     @Override

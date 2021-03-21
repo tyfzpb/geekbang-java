@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
          http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0"
-         metadata-complete="false">
+         metadata-complete="true">
 
     <context-param>
         <param-name>testAppName</param-name>
@@ -12,9 +12,9 @@
 
 
     <!-- 请确保这个 Listener 放置在首位 -->
-    <listener>
-        <listener-class>org.geektimes.projects.user.web.listener.ComponentContextInitializerListener</listener-class>
-    </listener>
+<!--    <listener>-->
+<!--        <listener-class>org.geektimes.projects.user.web.listener.ComponentContextInitializerListener</listener-class>-->
+<!--    </listener>-->
 
     <!-- 必须显示调用 -->
 <!--    <listener>-->
