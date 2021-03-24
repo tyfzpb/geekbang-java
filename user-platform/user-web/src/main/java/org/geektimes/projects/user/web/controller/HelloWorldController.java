@@ -18,14 +18,11 @@ public class HelloWorldController implements PageController {
     @POST
     @Path("/registry") // /hello/world -> HelloWorldController
     public String execute(HttpServletRequest request, HttpServletResponse response) throws Throwable {
-        ClassLoader classLoader = request.getServletContext().getClassLoader();
-        ClassLoader classLoader1 = this.getClass().getClassLoader();
-        ClassLoader classLoader2 = Thread.currentThread().getContextClassLoader();
-        Config config = ThreadLocalUtil.get(Config.class.getName());
-        config = ConfigProvider.getConfig(this.getClass().getClassLoader());
-        config = (Config)request.getServletContext().getAttribute(Config.class.getName());
+        // test config
+        Config config = (Config)request.getServletContext().getAttribute(Config.class.getName());
         if(config != null){
             String testAppName = config.getValue("testAppName",String.class);
+            System.out.println(testAppName);
         }
         return "registry.jsp";
     }

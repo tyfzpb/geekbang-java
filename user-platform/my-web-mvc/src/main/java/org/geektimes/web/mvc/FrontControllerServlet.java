@@ -2,7 +2,8 @@ package org.geektimes.web.mvc;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang.StringUtils;
-import org.geektimes.di.context.ComponentContext;
+import org.geektimes.context.ComponentContext;
+import org.geektimes.context.ClassicComponentContext;
 import org.geektimes.web.mvc.controller.Controller;
 import org.geektimes.web.mvc.controller.PageController;
 import org.geektimes.web.mvc.controller.RestController;
@@ -49,7 +50,7 @@ public class FrontControllerServlet extends HttpServlet {
      * @param servletConfig
      */
     public void init(ServletConfig servletConfig) {
-        ComponentContext context = (ComponentContext) servletConfig.getServletContext().getAttribute(ComponentContext.CONTEXT_NAME);
+        ComponentContext context = (ComponentContext) servletConfig.getServletContext().getAttribute(ClassicComponentContext.CONTEXT_NAME);
         this.context = context;
         initHandleMethods();
     }

@@ -5,7 +5,7 @@ import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigValue;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.eclipse.microprofile.config.spi.Converter;
-import org.geektimes.configuration.microprofile.config.converters.*;
+import org.geektimes.configuration.microprofile.config.converter.*;
 import org.geektimes.configuration.microprofile.config.source.ConfigSources;
 
 import java.util.LinkedHashSet;
@@ -28,40 +28,46 @@ public class DefaultConfig implements Config {
     }
 
     private void registerDefaultConverter(Converters converters) {
-        converters.addConverter(StringConverter.INSTANCE);
-        converters.addConverter(BooleanConverter.INSTANCE);
         converters.addConverter(boolean.class, BooleanConverter.INSTANCE);
-        converters.addConverter(DoubleConverter.INSTANCE);
+        converters.addConverter(short.class, ShortConverter.INSTANCE);
         converters.addConverter(double.class, DoubleConverter.INSTANCE);
-        converters.addConverter(FloatConverter.INSTANCE);
         converters.addConverter(float.class, FloatConverter.INSTANCE);
-        converters.addConverter(IntegerConverter.INSTANCE);
         converters.addConverter(int.class, IntegerConverter.INSTANCE);
-        converters.addConverter(LongConverter.INSTANCE);
         converters.addConverter(long.class, LongConverter.INSTANCE);
-        converters.addConverter(ClassConverter.INSTANCE);
-        converters.addConverter(DurationConverter.INSTANCE);
-        converters.addConverter(URLConverter.INSTANCE);
     }
 
 
     @Override
     public <T> T getValue(String propertyName, Class<T> propertyType) {
-        String propertyValue = getPropertyValue(propertyName);
+        ConfigValue configValue = getConfigValue(propertyName);
+        if (configValue == null) {
+            return null;
+        }
         // String 转换成目标类型
-        return convert(propertyValue, propertyType);
+        return convert(configValue.getValue(), propertyType);
     }
 
-    protected String getPropertyValue(String propertyName) {
+    @Override
+    public ConfigValue getConfigValue(String propertyName) {
         String propertyValue = null;
-        for (ConfigSource configSource : configSources) {
-            propertyValue = configSource.getValue(propertyName);
+        ConfigSource configSource = null;
+        for (ConfigSource source : configSources) {
+            propertyValue = source.getValue(propertyName);
             if (propertyValue != null) {
+                configSource = source;
                 break;
             }
         }
-        return propertyValue;
+
+        if (propertyValue == null) {
+            return null;
+        }
+
+        return new DefaultConfigValue(propertyName, propertyValue, transformPropertyValue(propertyValue),
+                configSource.getName(),
+                configSource.getOrdinal());
     }
+
 
     @Override
     public <T> Optional<Converter<T>> getConverter(Class<T> forType) {
@@ -78,9 +84,14 @@ public class DefaultConfig implements Config {
     }
 
 
-    @Override
-    public ConfigValue getConfigValue(String propertyName) {
-        return null;
+    /**
+     * 转换属性值（如果需要）
+     *
+     * @param propertyValue
+     * @return
+     */
+    protected String transformPropertyValue(String propertyValue) {
+        return propertyValue;
     }
 
 

@@ -25,9 +25,8 @@ public class DefaultConfigProviderResolver extends ConfigProviderResolver {
         return configsRepository.computeIfAbsent(classLoader, this::newConfig);
     }
 
-
     protected Config newConfig(ClassLoader classLoader) {
-        return getBuilder().forClassLoader(classLoader).addDefaultSources().addDiscoveredSources().addDiscoveredSources().build();
+        return getBuilder().forClassLoader(classLoader).addDefaultSources().addDiscoveredSources().addDiscoveredConverters().build();
     }
 
 

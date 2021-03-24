@@ -1,6 +1,6 @@
 package org.geektimes.projects.user.repository;
 
-import org.geektimes.di.function.ThrowableFunction;
+import org.geektimes.function.ThrowableFunction;
 import org.geektimes.projects.user.domain.User;
 import org.geektimes.projects.user.sql.DBConnectionManager;
 
