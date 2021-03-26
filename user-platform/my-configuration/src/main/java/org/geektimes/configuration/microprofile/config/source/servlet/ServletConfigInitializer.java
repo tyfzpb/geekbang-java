@@ -1,19 +1,17 @@
 package org.geektimes.configuration.microprofile.config.source.servlet;
 
+import org.geektimes.web.WebAppInitializer;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
-import org.geetimes.util.ThreadLocalUtil;
 
-import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import java.util.Set;
 
-public class ServletConfigInitializer implements ServletContainerInitializer {
+public class ServletConfigInitializer implements WebAppInitializer {
 
     @Override
-    public void onStartup(Set<Class<?>> c, ServletContext servletContext) throws ServletException {
+    public void onStartup(ServletContext servletContext) throws ServletException {
         ServletContextConfigSource servletContextConfigSource = new ServletContextConfigSource(servletContext);
         // 获取当前 ClassLoader
         ClassLoader classLoader = servletContext.getClassLoader();
@@ -35,6 +33,5 @@ public class ServletConfigInitializer implements ServletContainerInitializer {
         // 注册 Config 关联到当前 ClassLoader
         configProviderResolver.registerConfig(config, classLoader);
         servletContext.setAttribute(Config.class.getName(), config);
-        ThreadLocalUtil.set(Config.class.getName(), config);
     }
 }

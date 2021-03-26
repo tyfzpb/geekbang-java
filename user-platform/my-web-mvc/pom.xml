@@ -20,6 +20,7 @@
             <groupId>org.geekbang.projects</groupId>
             <artifactId>my-depedency-injection</artifactId>
             <version>${revision}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Servlet API -->
         <dependency>
@@ -38,16 +39,18 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
+        <!-- Jackson -->
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.72</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.geekbang.projects</groupId>
-            <artifactId>my-depedency-injection</artifactId>
-            <version>v1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
         </dependency>
     </dependencies>
 </project>

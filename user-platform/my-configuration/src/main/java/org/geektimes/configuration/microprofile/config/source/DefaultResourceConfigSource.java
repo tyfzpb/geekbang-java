@@ -4,10 +4,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class DefaultResourceConfigSource extends MapBasedConfigSource {
 
     private static final String configFileLocation = "META-INF/microprofile-config.properties";
+
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     public DefaultResourceConfigSource() {
         super("Default Config File", 100);

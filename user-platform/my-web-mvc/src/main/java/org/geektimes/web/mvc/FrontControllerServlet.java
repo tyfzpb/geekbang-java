@@ -1,9 +1,9 @@
 package org.geektimes.web.mvc;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang.StringUtils;
-import org.geektimes.context.ComponentContext;
 import org.geektimes.context.ClassicComponentContext;
+import org.geektimes.context.ComponentContext;
 import org.geektimes.web.mvc.controller.Controller;
 import org.geektimes.web.mvc.controller.PageController;
 import org.geektimes.web.mvc.controller.RestController;
@@ -242,7 +242,8 @@ public class FrontControllerServlet extends HttpServlet {
 
                         Object result = handlerMethod.invoke(controller, paramValues);
 
-                        Object jsonResult = JSONObject.toJSON(result);
+                        ObjectMapper objectMapper = new ObjectMapper();
+                        Object jsonResult = objectMapper.writeValueAsString(result);
                         response.setContentType("text/plain");
                         response.getWriter().write(jsonResult.toString());
                     }
