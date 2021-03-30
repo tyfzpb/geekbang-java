@@ -10,29 +10,36 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>my-web</artifactId>
-    <name>My Web Framework ${revision}</name>
-    <packaging>jar</packaging>
+    <artifactId>my-reactive-messaging</artifactId>
+    <name>My Reactive Messaging Framework ${revision}</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
-
     <dependencies>
-        <!-- Servlet API -->
+
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
+            <groupId>org.eclipse.microprofile.reactive.messaging</groupId>
+            <artifactId>microprofile-reactive-messaging-api</artifactId>
         </dependency>
 
-        <!-- Java Commons Annotations -->
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-all</artifactId>
+        </dependency>
+
     </dependencies>
 
 </project>

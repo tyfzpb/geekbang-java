@@ -2,6 +2,7 @@ package org.geektimes.projects.user.domain;
 
 import org.geektimes.projects.user.validator.bean.validation.Password;
 import org.geektimes.projects.user.validator.bean.validation.group.UpdateGroup;
+import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;

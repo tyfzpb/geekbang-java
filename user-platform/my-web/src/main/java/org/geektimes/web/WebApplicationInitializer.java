@@ -3,7 +3,7 @@ package org.geektimes.web;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-public interface WebAppInitializer {
+public interface WebApplicationInitializer {
 
     void onStartup(ServletContext servletContext)throws ServletException;
 }

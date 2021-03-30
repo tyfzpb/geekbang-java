@@ -1,6 +1,7 @@
 package org.geektimes.web.mvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.geektimes.context.ClassicComponentContext;
 import org.geektimes.context.ComponentContext;
@@ -22,6 +23,8 @@ import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -232,6 +235,7 @@ public class FrontControllerServlet extends HttpServlet {
 
                         Parameter[] parameters = handlerMethod.getParameters();
 
+
                         Object[] paramValues = new Object[handlerMethod.getParameterCount()];
                         for (int i = 0; i < parameters.length; i++) {
                             String value = Arrays.toString(parameterMap.get(parameters[i].getName()))
@@ -240,9 +244,13 @@ public class FrontControllerServlet extends HttpServlet {
                             paramValues[i] = value;
                         }
 
+                        ObjectMapper objectMapper = new ObjectMapper();
+
+
+
                         Object result = handlerMethod.invoke(controller, paramValues);
 
-                        ObjectMapper objectMapper = new ObjectMapper();
+
                         Object jsonResult = objectMapper.writeValueAsString(result);
                         response.setContentType("text/plain");
                         response.getWriter().write(jsonResult.toString());

@@ -1,14 +1,16 @@
 package org.geektimes.configuration.microprofile.config.source.servlet;
 
-import org.geektimes.web.WebAppInitializer;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigBuilder;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
+import org.geektimes.web.WebApplicationInitializer;
 
+import javax.annotation.Priority;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
-public class ServletConfigInitializer implements WebAppInitializer {
+@Priority(value = Integer.MIN_VALUE)
+public class ServletConfigInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {

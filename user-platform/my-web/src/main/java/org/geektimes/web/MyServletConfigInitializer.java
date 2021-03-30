@@ -9,21 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@HandlesTypes(WebAppInitializer.class)
+@HandlesTypes(WebApplicationInitializer.class)
 public class MyServletConfigInitializer implements ServletContainerInitializer {
     @Override
     public void onStartup(Set<Class<?>> webAppInitializerClasses, ServletContext servletContext) throws ServletException {
 
-        List<WebAppInitializer> waiList = new ArrayList<>();
+        List<WebApplicationInitializer> waiList = new ArrayList<>();
 
         if(webAppInitializerClasses != null){
             for (Class<?> waiClass : webAppInitializerClasses) {
 
                 if (!waiClass.isInterface() && !Modifier.isAbstract(waiClass.getModifiers()) &&
-                        WebAppInitializer.class.isAssignableFrom(waiClass)){
+                        WebApplicationInitializer.class.isAssignableFrom(waiClass)){
 
                     try{
-                        waiList.add((WebAppInitializer)waiClass.newInstance());
+                        waiList.add((WebApplicationInitializer)waiClass.newInstance());
                     }catch (Throwable ex) {
                         throw new ServletException("Failed to instantiate WebAppInitializer class", ex);
                     }
@@ -39,7 +39,9 @@ public class MyServletConfigInitializer implements ServletContainerInitializer {
             return;
         }
 
-        for(WebAppInitializer wai : waiList){
+        waiList.sort(WebApplicationInitializerOrdinalComparator.INSTANCE);
+
+        for(WebApplicationInitializer wai : waiList){
             wai.onStartup(servletContext);
         }
     }
