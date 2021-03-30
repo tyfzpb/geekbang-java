@@ -6,7 +6,7 @@
 ### 2. 继续完善 my-rest-client POST 方法 
 
 ### 完成情况：
-  - 参考GET方法处理，POST特别之处在于RequestBody。
+  - 参考GET方法处理，POST特别之处在于RequestBody的处理。
 ```java
  if (this.entity != null) {
     connection.setDoOutput(true);
@@ -22,4 +22,7 @@
 ```
 详见my-rest-client HttpPostInvovation#invoke方法
 
-- 测试类RestClientDemo
+- 测试类RestClientDemo#testPost方法
+- ps：采用user-web为http服务端，请先启动user-web应用
+    * mvn clean package
+    * java -jar user-web/target/user-web-v1-SNAPSHOT-war-exec.jar 
