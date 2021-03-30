@@ -1,7 +1,6 @@
 package org.geektimes.web.mvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.geektimes.context.ClassicComponentContext;
 import org.geektimes.context.ComponentContext;
@@ -28,6 +27,7 @@ import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static java.util.Arrays.asList;
@@ -164,12 +164,27 @@ public class FrontControllerServlet extends HttpServlet {
                         return;
                     }
 
+                    Method handlerMethod = handlerMethodInfo.getHandlerMethod();
+
+                    Map<String, String[]> parameterMap = request.getParameterMap();
+
+                    Parameter[] methodParameters = handlerMethod.getParameters();
+
+                    if ("POST".equalsIgnoreCase(httpMethod) && methodParameters.length == 1) {
+                        Class parameterClazz = methodParameters[0].getType();
+                        ObjectMapper objectMapper = new ObjectMapper();
+
+                        InputStream is = request.getInputStream();
+                        Object obj = objectMapper.readValue(new InputStreamReader(is, StandardCharsets.UTF_8), parameterClazz);
+                        Object result = handlerMethod.invoke(controller, obj);
+
+                        Object jsonResult = objectMapper.writeValueAsString(result);
+                        response.setContentType("text/plain");
+                        response.getWriter().write(jsonResult.toString());
+                        return;
+                    }
+
                     if (controller instanceof PageController) {
-                        Method handlerMethod = handlerMethodInfo.getHandlerMethod();
-
-                        Map<String, String[]> parameterMap = request.getParameterMap();
-
-                        Parameter[] methodParameters = handlerMethod.getParameters();
 
                         Object[] paramValues = new Object[handlerMethod.getParameterCount()];
                         for (int i = 0; i < methodParameters.length; i++) {
@@ -229,23 +244,16 @@ public class FrontControllerServlet extends HttpServlet {
                         requestDispatcher.forward(request, response);
                         return;
                     } else if (controller instanceof RestController) {
-                        Map<String, String[]> parameterMap = request.getParameterMap();
-
-                        Method handlerMethod = handlerMethodInfo.getHandlerMethod();
-
-                        Parameter[] parameters = handlerMethod.getParameters();
-
 
                         Object[] paramValues = new Object[handlerMethod.getParameterCount()];
-                        for (int i = 0; i < parameters.length; i++) {
-                            String value = Arrays.toString(parameterMap.get(parameters[i].getName()))
+                        for (int i = 0; i < methodParameters.length; i++) {
+                            String value = Arrays.toString(parameterMap.get(methodParameters[i].getName()))
                                     .replaceAll("\\[|\\]", "").replaceAll("\\s", "");
 
                             paramValues[i] = value;
                         }
 
                         ObjectMapper objectMapper = new ObjectMapper();
-
 
 
                         Object result = handlerMethod.invoke(controller, paramValues);

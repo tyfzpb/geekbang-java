@@ -5,49 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Response;
 import java.io.Serializable;
 import java.util.Objects;
-
-class PrettyDemo {
-    private String classes;
-    private String crumb;
-    private String crumbRequestField;
-
-    public String getCrumb() {
-        return crumb;
-    }
-
-    public void setCrumb(String crumb) {
-        this.crumb = crumb;
-    }
-
-    public String getCrumbRequestField() {
-        return crumbRequestField;
-    }
-
-    public void setCrumbRequestField(String crumbRequestField) {
-        this.crumbRequestField = crumbRequestField;
-    }
-
-    public String get_class() {
-        return classes;
-    }
-
-    public void set_class(String _class) {
-        this.classes = _class;
-    }
-
-    @Override
-    public String toString() {
-        return "prettyDemo{" +
-                "classes='" + classes + '\'' +
-                ", crumb='" + crumb + '\'' +
-                ", crumbRequestField='" + crumbRequestField + '\'' +
-                '}';
-    }
-}
-
 
 class User implements Serializable {
     private Long id;
@@ -127,34 +86,25 @@ class User implements Serializable {
 
 public class RestClientDemo {
 
-    public static void main(String[] args) throws Throwable{
-        Client client = ClientBuilder.newClient();
-        Response response = client
-                .target("http://localhost:9090/crumbIssuer/api/json?pretty=true")      // WebTarget
-                .request() // Invocation.Builder
-                .get();                                     //  Response
-
-        PrettyDemo content = response.readEntity(PrettyDemo.class);
-
-        System.out.println(content);
+    public static void main(String[] args) throws Throwable {
+        System.out.println("----------------------GET--------------------------");
         testGet();
+        System.out.println("----------------------POST-------------------------");
         testPost();
 
     }
 
-    public static  void testGet(){
+    public static void testGet() {
         Client client = ClientBuilder.newClient();
-        PrettyDemo content = client
-                .target("http://localhost:9090/crumbIssuer/api/json?pretty=true")      // WebTarget
+        String content = client
+                .target("http://localhost:8080/jolokia")      // WebTarget
                 .request() // Invocation.Builder
-                .get(PrettyDemo.class);                                     //  Response
-
-        //PrettyDemo content = response.readEntity(PrettyDemo.class);
+                .get(String.class);                                     //  Response
 
         System.out.println(content);
     }
 
-    public static void testPost() throws Throwable{
+    public static void testPost() throws Throwable {
         Client client = ClientBuilder.newClient();
 
         User user = new User();
@@ -165,8 +115,8 @@ public class RestClientDemo {
 
         ObjectMapper objectMapper = new ObjectMapper();
         String userJson = objectMapper.writeValueAsString(user);
-        String  result = client.target("http://localhost:8080/user-web/registry")
-                        .request().post(Entity.json(userJson),String.class);
+        User result = client.target("http://localhost:8080/testRestPost")
+                .request().post(Entity.json(userJson), User.class);
 
         System.out.println(result);
     }

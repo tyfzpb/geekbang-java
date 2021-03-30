@@ -30,18 +30,6 @@ public class HelloWorldController implements PageController {
             String testAppName = config.getValue("testAppName",String.class);
             System.out.println(testAppName);
         }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        if("POST".equalsIgnoreCase(request.getMethod())){
-            try{
-                InputStream is= request.getInputStream();
-                User user = objectMapper.readValue(new InputStreamReader(is, "UTF-8"), User.class);
-                System.out.println(user);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         return "registry.jsp";
     }
 
@@ -59,4 +47,13 @@ public class HelloWorldController implements PageController {
     public String loginSuccess(){
         return "login-success.jsp";
     }
+
+    @POST
+    @Path("/testRestPost")
+    public User testRestPost(User user){
+        System.out.println(user);
+        user.setId(111L);
+        return user;
+    }
+
 }
