@@ -16,8 +16,6 @@
  */
 package org.geektimes.cache.provider;
 
-import org.geektimes.cache.ConfigurableCachingProvider;
-
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.configuration.Configuration;

@@ -1,1 +1,1 @@
-org.geektimes.cache.ConfigurableCachingProvider
+org.geektimes.cache.provider.ConfigurableCachingProvider

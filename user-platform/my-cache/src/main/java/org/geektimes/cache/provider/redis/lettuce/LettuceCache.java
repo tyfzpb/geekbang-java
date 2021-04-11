@@ -3,6 +3,7 @@ package org.geektimes.cache.provider.redis.lettuce;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
+import org.geektimes.cache.ExpirableEntry;
 import org.geektimes.cache.provider.AbstractCache;
 import org.geektimes.cache.provider.redis.lettuce.codec.DefaultRedisCodec;
 
@@ -25,29 +26,35 @@ public class LettuceCache<K extends Serializable, V extends Serializable> extend
         this.redisCommands = statefulRedisConnection.sync();
     }
 
-    @Override
-    protected V doGet(K key) throws CacheException, ClassCastException {
-        return redisCommands.get(key);
-    }
-
-
-    @Override
-    protected V doPut(K key, V value) throws CacheException, ClassCastException {
-        V oldValue = doGet(key);
-        redisCommands.set(key, value);
-        return oldValue;
-    }
-
-    @Override
-    protected V doRemove(K key) throws CacheException, ClassCastException {
-        V oldValue = doGet(key);
-        redisCommands.del(key);
-        return oldValue;
-    }
 
     @Override
     protected void doClose() {
         this.statefulRedisConnection.close();
+    }
+
+    @Override
+    protected boolean containsEntry(K key) throws CacheException, ClassCastException {
+        return redisCommands.exists(key) > 0;
+    }
+
+    @Override
+    protected ExpirableEntry<K, V> getEntry(K key) throws CacheException, ClassCastException {
+        V value = redisCommands.get(key);
+        return ExpirableEntry.of(key, value);
+    }
+
+    @Override
+    protected void putEntry(ExpirableEntry<K, V> newEntry) throws CacheException, ClassCastException {
+        K key = newEntry.getKey();
+        V value = newEntry.getValue();
+        redisCommands.set(key, value);
+    }
+
+    @Override
+    protected ExpirableEntry<K, V> removeEntry(K key) throws CacheException, ClassCastException {
+        ExpirableEntry<K, V> oldEntry = getEntry(key);
+        redisCommands.del(key);
+        return oldEntry;
     }
 
     @Override

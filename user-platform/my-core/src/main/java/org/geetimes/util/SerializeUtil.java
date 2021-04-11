@@ -19,7 +19,7 @@ public class SerializeUtil {
     }
 
 
-    public static Object deserizlize(byte[] bytes) {
+    public static Object deserialize(byte[] bytes) {
         if (bytes == null) {
             return null;
         }

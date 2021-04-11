@@ -17,7 +17,7 @@
 package org.geektimes.cache.provider.memory;
 
 
-import org.geektimes.cache.EntryAdapter;
+import org.geektimes.cache.ExpirableEntry;
 import org.geektimes.cache.provider.AbstractCache;
 
 import javax.cache.Cache;
@@ -31,12 +31,11 @@ import java.util.Map;
 /**
  * In Memory no-thread-safe {@link Cache}
  *
- *
  * @since 1.0
  */
 public class InMemoryCache<K, V> extends AbstractCache<K, V> {
 
-    private final Map<K, V> cache;
+    private final Map<K, ExpirableEntry<K, V>> cache;
 
     public InMemoryCache(CacheManager cacheManager, String cacheName, Configuration<K, V> configuration) {
         super(cacheManager, cacheName, configuration);
@@ -44,17 +43,23 @@ public class InMemoryCache<K, V> extends AbstractCache<K, V> {
     }
 
     @Override
-    protected V doGet(K key) throws CacheException, ClassCastException {
+    protected boolean containsEntry(K key) throws CacheException, ClassCastException {
+        return cache.containsKey(key);
+    }
+
+    @Override
+    protected ExpirableEntry<K, V> getEntry(K key) throws CacheException, ClassCastException {
         return cache.get(key);
     }
 
     @Override
-    protected V doPut(K key, V value) throws CacheException, ClassCastException {
-        return cache.put(key, value);
+    protected void putEntry(ExpirableEntry<K, V> newEntry) throws CacheException, ClassCastException {
+        K key = newEntry.getKey();
+        cache.put(key, newEntry);
     }
 
     @Override
-    protected V doRemove(K key) throws CacheException, ClassCastException {
+    protected ExpirableEntry<K, V> removeEntry(K key) throws CacheException, ClassCastException {
         return cache.remove(key);
     }
 
@@ -64,8 +69,8 @@ public class InMemoryCache<K, V> extends AbstractCache<K, V> {
     }
 
     @Override
-    protected Iterator<Entry<K, V>> newIterator() {
-        return cache.entrySet().stream().map(EntryAdapter::of).iterator();
+    protected Iterator<Cache.Entry<K, V>> newIterator() {
+        return (Iterator) cache.values().iterator();
     }
 
 }

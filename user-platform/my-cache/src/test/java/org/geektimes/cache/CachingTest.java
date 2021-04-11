@@ -30,7 +30,9 @@ import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.configuration.MutableConfiguration;
 import javax.cache.spi.CachingProvider;
+import java.io.Serializable;
 import java.net.URI;
+import java.util.Objects;
 
 import static org.geektimes.cache.configuration.ConfigurationUtils.cacheEntryListenerConfiguration;
 import static org.junit.Assert.assertEquals;
@@ -101,6 +103,34 @@ public class CachingTest {
         assertEquals(value1, value2);
         cache.remove(key);
         assertNull(cache.get(key));
+    }
+
+
+
+    @Test
+    public void testLettuceUser(){
+        CachingProvider cachingProvider = Caching.getCachingProvider();
+        CacheManager cacheManager = cachingProvider.getCacheManager(URI.create("redis://localhost:6379/"), null);
+        // configure the cache
+        MutableConfiguration<String, User> config =
+                new MutableConfiguration<String, User>()
+                        .setTypes(String.class, User.class);
+        // create the cache
+        Cache<String, User> cache = cacheManager.createCache("userCache", config);
+        // add listener
+        cache.registerCacheEntryListener(cacheEntryListenerConfiguration(new TestCacheEntryListener<>()));
+        // cache operations
+        String key = "user";
+        User value1 = new User("ty",1L);
+        cache.put(key, value1);
+
+        // update
+        User value2 = new User("ty",1L);
+        //value1 = value1.setEmail("ty_fzpb@163.com");
+        cache.put(key, value2);
+
+        User value3 = cache.get(key);
+        assertEquals(value2, value3);
     }
 
 

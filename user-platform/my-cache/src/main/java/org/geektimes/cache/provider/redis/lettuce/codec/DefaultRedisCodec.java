@@ -36,7 +36,7 @@ public class DefaultRedisCodec<K, V> implements RedisCodec<K, V> {
         } else if (clazz.equals(Double.class)) {
             return new DoubleCodec();
         } else {
-            throw new RuntimeException("not support types!");
+            return null;
         }
     }
 
@@ -64,7 +64,7 @@ public class DefaultRedisCodec<K, V> implements RedisCodec<K, V> {
         }
         byte[] bytes = new byte[remaing];
         buffer.get(bytes);
-        return SerializeUtil.deserizlize(bytes);
+        return SerializeUtil.deserialize(bytes);
     }
 
 
