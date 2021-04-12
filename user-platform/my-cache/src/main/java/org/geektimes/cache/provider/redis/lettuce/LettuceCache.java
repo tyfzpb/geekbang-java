@@ -12,6 +12,7 @@ import javax.cache.CacheManager;
 import javax.cache.configuration.Configuration;
 import java.io.Serializable;
 import java.util.Iterator;
+import java.util.Set;
 
 public class LettuceCache<K extends Serializable, V extends Serializable> extends AbstractCache<K, V> {
 
@@ -58,12 +59,14 @@ public class LettuceCache<K extends Serializable, V extends Serializable> extend
     }
 
     @Override
-    protected void doClear() throws CacheException {
-
+    protected void clearEntries() throws CacheException {
+        // TODO
     }
 
+
     @Override
-    protected Iterator<Entry<K, V>> newIterator() {
+    protected Set<K> keySet() {
+        // TODO
         return null;
     }
 }

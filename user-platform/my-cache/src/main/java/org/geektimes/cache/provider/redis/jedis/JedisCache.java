@@ -10,7 +10,7 @@ import javax.cache.CacheException;
 import javax.cache.CacheManager;
 import javax.cache.configuration.Configuration;
 import java.io.Serializable;
-import java.util.Iterator;
+import java.util.Set;
 
 public class JedisCache<K extends Serializable, V extends Serializable> extends AbstractCache<K, V> {
 
@@ -43,9 +43,9 @@ public class JedisCache<K extends Serializable, V extends Serializable> extends 
     }
 
     @Override
-    protected void putEntry(ExpirableEntry<K, V> newEntry) throws CacheException, ClassCastException {
-        byte[] keyBytes = serializer.serialize(newEntry.getKey());
-        byte[] valueBytes = serializer.serialize(newEntry.getValue());
+    protected void putEntry(ExpirableEntry<K, V> entry) throws CacheException, ClassCastException {
+        byte[] keyBytes = serializer.serialize(entry.getKey());
+        byte[] valueBytes = serializer.serialize(entry.getValue());
         jedis.set(keyBytes, valueBytes);
     }
 
@@ -59,17 +59,19 @@ public class JedisCache<K extends Serializable, V extends Serializable> extends 
 
 
     @Override
+    protected void clearEntries() throws CacheException {
+        // TODO
+    }
+
+
+    @Override
+    protected Set<K> keySet() {
+        // TODO
+        return null;
+    }
+
+    @Override
     protected void doClose() {
         this.jedis.close();
-    }
-
-    @Override
-    protected void doClear() throws CacheException {
-
-    }
-
-    @Override
-    protected Iterator<Entry<K, V>> newIterator() {
-        return null;
     }
 }

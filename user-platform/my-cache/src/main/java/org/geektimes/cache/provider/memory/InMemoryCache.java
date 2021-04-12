@@ -25,8 +25,8 @@ import javax.cache.CacheException;
 import javax.cache.CacheManager;
 import javax.cache.configuration.Configuration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * In Memory no-thread-safe {@link Cache}
@@ -52,10 +52,16 @@ public class InMemoryCache<K, V> extends AbstractCache<K, V> {
         return cache.get(key);
     }
 
+
     @Override
-    protected void putEntry(ExpirableEntry<K, V> newEntry) throws CacheException, ClassCastException {
-        K key = newEntry.getKey();
-        cache.put(key, newEntry);
+    protected Set<K> keySet() {
+        return cache.keySet();
+    }
+
+    @Override
+    protected void putEntry(ExpirableEntry<K, V> entry) throws CacheException, ClassCastException {
+        K key = entry.getKey();
+        cache.put(key, entry);
     }
 
     @Override
@@ -64,13 +70,8 @@ public class InMemoryCache<K, V> extends AbstractCache<K, V> {
     }
 
     @Override
-    protected void doClear() throws CacheException {
+    protected void clearEntries() throws CacheException {
         cache.clear();
-    }
-
-    @Override
-    protected Iterator<Cache.Entry<K, V>> newIterator() {
-        return (Iterator) cache.values().iterator();
     }
 
 }
