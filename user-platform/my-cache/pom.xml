@@ -24,6 +24,7 @@
         <dependency>
             <groupId>org.geekbang.projects</groupId>
             <artifactId>my-core</artifactId>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
