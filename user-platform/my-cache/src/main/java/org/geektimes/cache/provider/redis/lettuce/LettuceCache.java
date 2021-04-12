@@ -5,7 +5,7 @@ import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import org.geektimes.cache.ExpirableEntry;
 import org.geektimes.cache.provider.AbstractCache;
-import org.geektimes.cache.provider.redis.lettuce.codec.DefaultRedisCodec;
+import org.geektimes.cache.provider.redis.lettuce.codec.GenericRedisCodec;
 
 import javax.cache.CacheException;
 import javax.cache.CacheManager;
@@ -22,7 +22,7 @@ public class LettuceCache<K extends Serializable, V extends Serializable> extend
 
     public <C extends Configuration<K, V>> LettuceCache(CacheManager cacheManager, String cacheName, C configuration, RedisClient redisClient) {
         super(cacheManager, cacheName, configuration);
-        this.statefulRedisConnection = redisClient.connect(new DefaultRedisCodec(configuration.getKeyType(), configuration.getValueType()));
+        this.statefulRedisConnection = redisClient.connect(new GenericRedisCodec(configuration.getKeyType(), configuration.getValueType()));
         this.redisCommands = statefulRedisConnection.sync();
     }
 

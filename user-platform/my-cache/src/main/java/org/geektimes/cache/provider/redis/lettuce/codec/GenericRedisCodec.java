@@ -1,21 +1,23 @@
 package org.geektimes.cache.provider.redis.lettuce.codec;
 
 import io.lettuce.core.codec.RedisCodec;
-import io.netty.buffer.ByteBuf;
-import org.geektimes.util.SerializeUtil;
+import org.geektimes.cache.serializer.ByteArraySerializer;
+import org.geektimes.cache.serializer.CacheSerializer;
 
 import java.nio.ByteBuffer;
 
-public class DefaultRedisCodec<K, V> implements RedisCodec<K, V> {
+public class GenericRedisCodec<K, V> implements RedisCodec<K, V> {
 
     private static final byte[] EMPTY = new byte[0];
     private final Codec keyCodec;
     private final Codec valueCodec;
+    private final CacheSerializer<Object, byte[]> serializer;
 
 
-    public DefaultRedisCodec(Class<K> k, Class<V> v) {
+    public GenericRedisCodec(Class<K> k, Class<V> v) {
         this.keyCodec = initCodec(k);
         this.valueCodec = initCodec(v);
+        this.serializer = new ByteArraySerializer();
     }
 
     private Codec initCodec(Class clazz) {
@@ -64,7 +66,7 @@ public class DefaultRedisCodec<K, V> implements RedisCodec<K, V> {
         }
         byte[] bytes = new byte[remaing];
         buffer.get(bytes);
-        return SerializeUtil.deserialize(bytes);
+        return serializer.deserialize(bytes);
     }
 
 
@@ -72,7 +74,7 @@ public class DefaultRedisCodec<K, V> implements RedisCodec<K, V> {
         if (obj == null) {
             return ByteBuffer.wrap(EMPTY);
         }
-        byte[] bytes = SerializeUtil.serialize(obj);
+        byte[] bytes = serializer.serialize(obj);
         return ByteBuffer.wrap(bytes);
     }
 
@@ -94,14 +96,5 @@ public class DefaultRedisCodec<K, V> implements RedisCodec<K, V> {
         return encode(value);
     }
 
-
-    private void encode(Object obj, ByteBuf target) {
-        byte[] bytes = null;
-        if (obj == null) {
-            bytes = EMPTY;
-        }
-        bytes = SerializeUtil.serialize(obj);
-        target.writeBytes(bytes);
-    }
 
 }
