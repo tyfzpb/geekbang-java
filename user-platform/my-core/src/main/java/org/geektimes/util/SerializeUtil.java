@@ -1,4 +1,4 @@
-package org.geetimes.util;
+package org.geektimes.util;
 
 import java.io.*;
 

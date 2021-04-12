@@ -2,7 +2,7 @@ package org.geektimes.configuration.microprofile.config;
 
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
-import org.geetimes.util.ThreadLocalUtil;
+import org.geektimes.util.ThreadLocalUtil;
 import org.junit.jupiter.api.*;
 
 import java.util.logging.Level;

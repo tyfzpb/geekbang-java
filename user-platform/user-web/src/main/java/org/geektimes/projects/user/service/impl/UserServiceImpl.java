@@ -7,13 +7,11 @@ import org.geektimes.projects.user.service.UserService;
 import org.geektimes.projects.user.sql.DBConnectionManager;
 import org.geektimes.projects.user.sql.LocalTransactional;
 import org.geektimes.projects.user.validator.bean.validation.group.UpdateGroup;
-import org.geetimes.util.MD5Utils;
+import org.geektimes.util.MD5Utils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;

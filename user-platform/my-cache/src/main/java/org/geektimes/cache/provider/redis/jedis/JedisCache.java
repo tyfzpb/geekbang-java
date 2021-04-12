@@ -10,8 +10,8 @@ import javax.cache.configuration.Configuration;
 import java.io.Serializable;
 import java.util.Iterator;
 
-import static org.geetimes.util.SerializeUtil.deserialize;
-import static org.geetimes.util.SerializeUtil.serialize;
+import static org.geektimes.util.SerializeUtil.deserialize;
+import static org.geektimes.util.SerializeUtil.serialize;
 
 public class JedisCache<K extends Serializable, V extends Serializable> extends AbstractCache<K, V> {
 

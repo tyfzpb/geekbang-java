@@ -2,7 +2,7 @@ package org.geektimes.cache.provider.redis.lettuce.codec;
 
 import io.lettuce.core.codec.RedisCodec;
 import io.netty.buffer.ByteBuf;
-import org.geetimes.util.SerializeUtil;
+import org.geektimes.util.SerializeUtil;
 
 import java.nio.ByteBuffer;
 
