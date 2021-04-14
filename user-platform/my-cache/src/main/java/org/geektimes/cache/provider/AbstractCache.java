@@ -4,6 +4,9 @@ import org.geektimes.cache.ExpirableEntry;
 import org.geektimes.cache.event.CacheEntryEventPublisher;
 import org.geektimes.cache.integration.CompositeFallbackStorage;
 import org.geektimes.cache.integration.FallbackStorage;
+import org.geektimes.cache.management.CacheStatistics;
+import org.geektimes.cache.management.DummyCacheStatistics;
+import org.geektimes.cache.management.SimpleCacheStatistics;
 import org.geektimes.cache.processor.MutableEntryAdapter;
 
 import javax.cache.Cache;
@@ -63,6 +66,8 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
 
     private final Executor executor;
 
+    private final CacheStatistics cacheStatistics;
+
     private volatile boolean closed = false;
 
     protected AbstractCache(CacheManager cacheManager, String cacheName, Configuration<K, V> configuration) {
@@ -74,9 +79,14 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         this.cacheLoader = resolveCacheLoader(getConfiguration(), getClassLoader());
         this.cacheWriter = resolveCacheWriter(getConfiguration(), getClassLoader());
         this.entryEventPublisher = new CacheEntryEventPublisher();
+        this.cacheStatistics = resolveCacheStatistic();
         this.executor = ForkJoinPool.commonPool();
         registerCacheEntryListenersFromConfiguration();
         registerCacheMXBeanIfRequired(this);
+    }
+
+    private static <K, V> V getValue(Entry<K, V> entry) {
+        return entry == null ? null : entry.getValue();
     }
 
     /**
@@ -99,7 +109,6 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
      *
      * @param key key whose presence in this cache is to be tested.
      * @param key the specified key
-     * @return <tt>true</tt> if this map contains a mapping for the specified key
      * @return
      * @throws NullPointerException  if key is null
      * @throws IllegalStateException if the cache is {@link #isClosed()}
@@ -445,6 +454,7 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     public void put(K key, V value) {
         assertNotClosed();
         Entry<K, V> entry = null;
+        long startTime = System.currentTimeMillis();
         try {
             if (!containsKey(key)) {
                 // Put the new Cache.Entry
@@ -453,6 +463,8 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
                 entry = updateEntry(key, value);
             }
         } finally {
+            cacheStatistics.cachePuts();
+            cacheStatistics.cachePutsTime(System.currentTimeMillis() - startTime);
             writeEntryIfWriteThrough(entry);
         }
     }
@@ -724,13 +736,13 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
     protected void doClose() {
     }
 
+
+    // Operations of CompleteConfiguration
+
     @Override
     public final boolean isClosed() {
         return closed;
     }
-
-
-    // Operations of CompleteConfiguration
 
     protected final CompleteConfiguration<K, V> getConfiguration() {
         return this.configuration;
@@ -752,8 +764,12 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         return configuration.isManagementEnabled();
     }
 
-
     // Operations of Cache.Entry and ExpirableEntry
+
+    private CacheStatistics resolveCacheStatistic() {
+        return isStatisticsEnabled() ?
+                new SimpleCacheStatistics() : DummyCacheStatistics.INSTANCE;
+    }
 
     private Entry<K, V> createAndPutEntry(K key, V value) {
         // Create Cache.Entry
@@ -849,15 +865,15 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
      */
     protected abstract void clearEntries() throws CacheException;
 
+
+    // Operations of CacheLoader and CacheWriter
+
     /**
      * Get all keys of {@link Cache.Entry} in the {@link Cache}
      *
      * @return the non-null read-only {@link Set}
      */
     protected abstract Set<K> keySet();
-
-
-    // Operations of CacheLoader and CacheWriter
 
     protected CacheLoader<K, V> getCacheLoader() {
         return this.cacheLoader;
@@ -915,13 +931,13 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         }
     }
 
+    // Operations of CacheEntryEvent and CacheEntryListenerConfiguration
+
     private void deleteIfWriteThrough(K key) {
         if (isWriteThrough()) {
             getCacheWriter().delete(key);
         }
     }
-
-    // Operations of CacheEntryEvent and CacheEntryListenerConfiguration
 
     private void registerCacheEntryListenersFromConfiguration() {
         this.configuration.getCacheEntryListenerConfigurations()
@@ -940,11 +956,11 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         entryEventPublisher.publish(expiredEvent(this, key, oldValue));
     }
 
+    // Operations of ExpiryPolicy and Duration
+
     private void publishRemovedEvent(K key, V oldValue) {
         entryEventPublisher.publish(removedEvent(this, key, oldValue));
     }
-
-    // Operations of ExpiryPolicy and Duration
 
     private boolean handleExpiryPolicyForCreation(ExpirableEntry<K, V> newEntry) {
         return handleExpiryPolicy(newEntry, getExpiryForCreation(), false);
@@ -1024,6 +1040,9 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         return expiryPolicyFactory.create();
     }
 
+
+    // Other Operations
+
     private Duration getDuration(Supplier<Duration> durationSupplier) {
         Duration duration = null;
         try {
@@ -1035,9 +1054,6 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         return duration;
     }
 
-
-    // Other Operations
-
     protected ClassLoader getClassLoader() {
         return getCacheManager().getClassLoader();
     }
@@ -1046,9 +1062,5 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         if (isClosed()) {
             throw new IllegalStateException("Current cache has been closed! No operation should be executed.");
         }
-    }
-
-    private static <K, V> V getValue(Entry<K, V> entry) {
-        return entry == null ? null : entry.getValue();
     }
 }
