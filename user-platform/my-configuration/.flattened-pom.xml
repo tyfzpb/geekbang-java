@@ -22,6 +22,11 @@
       <version>${revision}</version>
     </dependency>
     <dependency>
+      <groupId>org.geekbang.projects</groupId>
+      <artifactId>my-web</artifactId>
+      <version>${revision}</version>
+    </dependency>
+    <dependency>
       <groupId>org.eclipse.microprofile.config</groupId>
       <artifactId>microprofile-config-api</artifactId>
     </dependency>
@@ -29,6 +34,11 @@
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

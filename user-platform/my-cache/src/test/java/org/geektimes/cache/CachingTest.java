@@ -87,7 +87,7 @@ public class CachingTest {
                         .setTypes(String.class, Integer.class);
 
         // create the cache
-        Cache<String, Integer> cache = cacheManager.createCache("redisCache", config);
+        Cache<String, Integer> cache = cacheManager.createCache("redisCache1", config);
 
         // add listener
         cache.registerCacheEntryListener(cacheEntryListenerConfiguration(new TestCacheEntryListener<>()));
@@ -192,4 +192,7 @@ public class CachingTest {
 /// ... when closing your application:
         pool.close();
     }
+
+
+
 }

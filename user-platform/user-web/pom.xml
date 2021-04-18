@@ -37,6 +37,11 @@
             <artifactId>my-web-mvc</artifactId>
             <version>${revision}</version>
         </dependency>
+        <dependency>
+            <groupId>org.geekbang.projects</groupId>
+            <artifactId>my-cache</artifactId>
+            <version>${revision}</version>
+        </dependency>
 
         <!-- Servlet API -->
         <dependency>
@@ -51,13 +56,23 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>commons-validator</groupId>
-            <artifactId>commons-validator</artifactId>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derby</artifactId>
         </dependency>
 
         <!-- Hibernate ORM Core -->
@@ -141,6 +156,25 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Apache Tomcat -->
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-catalina-ha</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-dbcp</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat-jdbc</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
     </dependencies>
 
     <profiles>
@@ -151,6 +185,7 @@
             </activation>
             <build>
                 <plugins>
+
                     <!-- Tomcat Maven 插件用于构建可执行 war -->
                     <!-- Tomcat 7.x 官方文档：
                     http://tomcat.apache.org/tomcat-7.0-doc/index.html
@@ -170,6 +205,9 @@
                                     <!-- ServletContext 路径 -->
                                     <path>/</path>
                                     <enableNaming>true</enableNaming>
+                                    <tomcatConfigurationFilesDirectory>
+                                        src/main/webapp/META-INF/conf/
+                                    </tomcatConfigurationFilesDirectory>
                                 </configuration>
                             </execution>
                         </executions>
@@ -202,6 +240,9 @@
                                     <!-- ServletContext 路径 -->
                                     <path>/</path>
                                     <enableNaming>true</enableNaming>
+                                    <tomcatConfigurationFilesDirectory>
+                                        src/main/webapp/META-INF/conf/
+                                    </tomcatConfigurationFilesDirectory>
                                 </configuration>
                             </execution>
                         </executions>
