@@ -1,6 +1,8 @@
 package org.geektimes.projects.user.web.controller;
 
 import org.eclipse.microprofile.config.Config;
+import org.geektimes.oauth.config.AuthConfig;
+import org.geektimes.oauth.request.GiteeAuthRequest;
 import org.geektimes.projects.user.domain.User;
 import org.geektimes.web.mvc.controller.PageController;
 
@@ -9,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import java.io.IOException;
 
 
 public class HelloWorldController implements PageController {
@@ -48,5 +51,8 @@ public class HelloWorldController implements PageController {
         user.setId(111L);
         return user;
     }
+
+
+
 
 }

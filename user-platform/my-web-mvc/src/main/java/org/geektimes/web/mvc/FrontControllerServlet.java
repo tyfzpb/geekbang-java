@@ -247,6 +247,14 @@ public class FrontControllerServlet extends HttpServlet {
 
                         Object[] paramValues = new Object[handlerMethod.getParameterCount()];
                         for (int i = 0; i < methodParameters.length; i++) {
+                            if (HttpServletRequest.class == methodParameters[i].getType()) {
+                                paramValues[i] = request;
+                                continue;
+                            }
+                            if (HttpServletResponse.class == methodParameters[i].getType()) {
+                                paramValues[i] = response;
+                                continue;
+                            }
                             String value = Arrays.toString(parameterMap.get(methodParameters[i].getName()))
                                     .replaceAll("\\[|\\]", "").replaceAll("\\s", "");
 

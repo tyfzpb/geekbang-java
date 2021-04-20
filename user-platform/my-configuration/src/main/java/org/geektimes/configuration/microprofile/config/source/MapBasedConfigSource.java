@@ -21,7 +21,7 @@ public abstract class MapBasedConfigSource implements ConfigSource {
     protected MapBasedConfigSource(String name, int ordinal) {
         this.name = name;
         this.ordinal = ordinal;
-        this.configData = new HashMap<>();
+        this.configData = getProperties();
     }
 
     /**
@@ -30,12 +30,13 @@ public abstract class MapBasedConfigSource implements ConfigSource {
      * @return 不可变 Map 类型的配置数据
      */
     public final Map<String, String> getProperties() {
+        Map<String, String> data = new HashMap<>();
         try {
-            prepareConfigData(configData);
+            prepareConfigData(data);
         } catch (Throwable cause) {
             throw new IllegalStateException("准备配置数据发生错误", cause);
         }
-        return Collections.unmodifiableMap(configData);
+        return Collections.unmodifiableMap(data);
     }
 
     /**

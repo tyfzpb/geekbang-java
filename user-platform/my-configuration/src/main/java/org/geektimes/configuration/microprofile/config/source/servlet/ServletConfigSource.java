@@ -10,19 +10,24 @@ import static java.lang.String.format;
 
 public class ServletConfigSource extends MapBasedConfigSource {
 
-    private final ServletConfig servletConfig;
+    private Map<String,String> parameters;
 
     public ServletConfigSource(ServletConfig servletConfig) {
         super(format("Servlet[name:%s] Init Parameters", servletConfig.getServletName()), 600);
-        this.servletConfig = servletConfig;
+        getParameters(servletConfig);
+    }
+
+
+    private void getParameters(ServletConfig servletConfig){
+        Enumeration<String> parameterNames = servletConfig.getInitParameterNames();
+        while (parameterNames.hasMoreElements()) {
+            String parameterName = parameterNames.nextElement();
+            parameters.put(parameterName, servletConfig.getInitParameter(parameterName));
+        }
     }
 
     @Override
     protected void prepareConfigData(Map configData) throws Throwable {
-        Enumeration<String> parameterNames = servletConfig.getInitParameterNames();
-        while (parameterNames.hasMoreElements()) {
-            String parameterName = parameterNames.nextElement();
-            configData.put(parameterName, servletConfig.getInitParameter(parameterName));
-        }
+        this.parameters = configData;
     }
 }

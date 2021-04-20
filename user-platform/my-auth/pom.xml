@@ -3,15 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.geekbang.projects</groupId>
         <artifactId>user-platform</artifactId>
+        <groupId>org.geekbang.projects</groupId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>my-web</artifactId>
-    <name>My Web Framework ${revision}</name>
+    <artifactId>my-auth</artifactId>
+    <name>My Auth Framework ${revision}</name>
     <packaging>jar</packaging>
 
     <properties>
@@ -19,31 +19,19 @@
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
 
-
     <dependencies>
 
         <dependency>
             <groupId>org.geekbang.projects</groupId>
-            <artifactId>my-core</artifactId>
+            <artifactId>my-rest-client</artifactId>
             <version>${revision}</version>
         </dependency>
 
-
-        <!-- Servlet API -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <!-- Java Commons Annotations -->
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-        </dependency>
-
     </dependencies>
-
-
 
 </project>

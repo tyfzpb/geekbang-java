@@ -16,6 +16,6 @@ public class WebApplicationInitializerOrdinalComparator implements Comparator<We
         Priority priority2 = o2.getClass().getAnnotation(Priority.class);
         int value1 = null == priority1 ? Integer.MAX_VALUE : priority1.value();
         int value2 = null == priority2 ? Integer.MAX_VALUE : priority2.value();
-        return Integer.compare(value2,value1);
+        return Integer.compare(value1,value2);
     }
 }

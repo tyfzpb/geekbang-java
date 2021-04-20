@@ -26,17 +26,17 @@ import java.util.logging.Logger;
 
 public class PropertyFileConfigSource extends MapBasedConfigSource {
     private static final Logger LOG = Logger.getLogger(PropertyFileConfigSource.class.getName());
-    private final Properties properties;
+    private Map data;
 
     public PropertyFileConfigSource(URL propertyFileUrl) {
         super(propertyFileUrl.toExternalForm(), 100);
-        properties = loadProperties(propertyFileUrl);
+        data.putAll(loadProperties(propertyFileUrl));
     }
 
 
     @Override
     protected void prepareConfigData(Map configData) throws Throwable {
-        configData.putAll(this.properties);
+        this.data = configData;
     }
 
     private Properties loadProperties(URL url) {
