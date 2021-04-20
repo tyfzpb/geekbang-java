@@ -28,18 +28,24 @@
 			<h1 class="h3 mb-3 font-weight-normal">登录</h1>
 
 			<label for="inputUsername" class="sr-only">用户名</label>
-			<input type="text" id="inputUsername" name="name" class="form-control" placeholder="请输入用户名" required autofocus onblur="checkUserName();"/>
+			<input type="text" id="inputUsername" name="name" class="form-control" placeholder="请输入用户名" required autofocus />
 			<div id="showUserNameMsg"></div>
 			<br/>
 
 			<label for="inputPassword" class="sr-only">密码</label>
-			<input type="password" id="inputPassword" name="password" class="form-control" placeholder="请输入密码" required onblur="checkPassword();"/>
+			<input type="password" id="inputPassword" name="password" class="form-control" placeholder="请输入密码" required />
 			<div id="showPasswordMsg"></div>
 			<br/>
 
 			<button class="btn btn-lg btn-primary btn-block" type="button" onclick="submitLoginForm();">登录</button>
 		</form>
 	</div>
+	<div class="container">
+	    <span>其他方式登录</span>
+	    <a href="/login/gitee" img="/static/img/gitee.jpg" title="使用gitee账号登录"/>gitee账号登录
+	    <a href="/login/github" img="/static/img/github.jpg" title="使用github账号登录"/>github账号登录
+	</div>
+
 </body>
 <script>
     function submitLoginForm(){

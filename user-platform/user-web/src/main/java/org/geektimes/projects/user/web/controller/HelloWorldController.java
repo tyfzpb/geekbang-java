@@ -52,6 +52,18 @@ public class HelloWorldController implements PageController {
         return user;
     }
 
+    @Path("/login/oauth2/code/github")
+    public String loginCallbackGithub(String code,HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("source","github");
+        return "oauthCallback.jsp";
+    }
+
+    @Path("/login/oauth2/code/gitee")
+    public String loginCallbackGitee(String code,HttpServletRequest request, HttpServletResponse response) {
+        request.setAttribute("source","gitee");
+        return "oauthCallback.jsp";
+    }
+
 
 
 

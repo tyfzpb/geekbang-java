@@ -2,9 +2,7 @@ package org.geektimes.projects.user.web.controller;
 
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
-import org.eclipse.microprofile.config.spi.ConfigSourceProvider;
 import org.geektimes.oauth.config.AuthConfig;
-import org.geektimes.oauth.config.DefaultAuthSource;
 import org.geektimes.oauth.model.AuthCallback;
 import org.geektimes.oauth.request.AuthReqeust;
 import org.geektimes.oauth.request.GitHubAuthRequest;
@@ -19,24 +17,16 @@ import java.io.IOException;
 public class Oauth2Controller implements RestController {
 
 
-    @Path("/login/oauth2/code/gitee")
-    public Object loginCallbackGitee(String code) {
-        AuthReqeust authReqeust = getAuthReqeust("gitee");
-        return authReqeust.login(AuthCallback.builder().code(code).build());
-    }
-
-
-
     @Path("/login/gitee")
     public void loginGitee(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String result = getAuthReqeust("gitee").authorize();
         response.sendRedirect(result);
     }
 
-    @Path("/login/oauth2/code/github")
-    public Object loginCallbackGithub(String code) {
-        AuthReqeust authReqeust = getAuthReqeust("github");
-        return authReqeust.login(AuthCallback.builder().code(code).build());
+    @Path("/login/oauth")
+    public Object oauth(String code,String source,String state){
+        AuthReqeust authReqeust = getAuthReqeust(source);
+        return authReqeust.login(AuthCallback.builder().code(code).state(state).build());
     }
 
 
@@ -48,12 +38,12 @@ public class Oauth2Controller implements RestController {
     }
 
 
-    private AuthReqeust getAuthReqeust(String name){
+    private AuthReqeust getAuthReqeust(String name) {
         Config config = ConfigProviderResolver.instance().getConfig();
-        String clientId = config.getValue(name + ".client_id",String.class);
-        String clientSecret = config.getValue(name +".client_secret",String.class);
-        String redirectUri = config.getValue(name +".redirect_uri",String.class);
-        if("gitee".equals(name)){
+        String clientId = config.getValue(name + ".client_id", String.class);
+        String clientSecret = config.getValue(name + ".client_secret", String.class);
+        String redirectUri = config.getValue(name + ".redirect_uri", String.class);
+        if ("gitee".equals(name)) {
             return new GiteeAuthRequest(
                     AuthConfig.builder().clientId(clientId)
                             .clientSecret(clientSecret)

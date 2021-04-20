@@ -41,8 +41,6 @@ public class GiteeAuthRequest extends DefaultAuthReqesut {
         } catch (IOException e) {
             throw new AuthException(e.getMessage());
         }
-
-
     }
 
     @Override
@@ -67,7 +65,6 @@ public class GiteeAuthRequest extends DefaultAuthReqesut {
         } catch (IOException e) {
             throw new AuthException(e.getMessage());
         }
-
     }
 
     /**

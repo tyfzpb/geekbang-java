@@ -56,7 +56,7 @@ public abstract class DefaultAuthReqesut implements AuthReqeust {
             AuthUser authUser = this.getUserInfo(authToken);
             return AuthResponse.builder().code(200).data(authUser).build();
         } catch (Exception e) {
-            return responseError(e);
+            return errorResponse(e);
         }
     }
 
@@ -66,7 +66,7 @@ public abstract class DefaultAuthReqesut implements AuthReqeust {
      * @param e
      * @return
      */
-    private AuthResponse responseError(Exception e) {
+    private AuthResponse errorResponse(Exception e) {
         int errorCode = 500;
         String errorMsg = e.getMessage();
         if (e instanceof AuthException) {
