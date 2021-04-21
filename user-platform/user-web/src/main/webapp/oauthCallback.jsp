@@ -36,7 +36,7 @@
             state : "${param.state}"},
             function(json){
                 if(json.code == "200" && json.data != ""){
-                    $("#showMsg").html("欢迎：" + json.data.userName);
+                    $("#showMsg").html("欢迎：" + json.data.userName + "<img src=" + json.data.avatar + " height=50 width=50 />");
                 }else{
                     $("#showMsg").html("出错了：" + json.msg);
                 }
