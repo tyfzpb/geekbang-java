@@ -111,6 +111,6 @@
       }
     ```
    
-    - 测试页面http://localhost:8080/login 选择其他方式登录：gitee账号登录 或者 github账号登录
+   - 测试页面http://localhost:8080/login 选择其他方式登录：gitee账号登录 或者 github账号登录
   
-    
+   - PS : client_id 、 client_secret已失效，测试时需自行更新
