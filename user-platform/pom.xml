@@ -58,7 +58,6 @@
         <hibernate.version>5.4.29.Final</hibernate.version>
         <hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
         <glassfish-el.version>3.0.1-b08</glassfish-el.version>
-        <jackson.version>2.9.5</jackson.version>
         <activemq.version>5.9.1</activemq.version>
         <tomcat7.version>7.0.37</tomcat7.version>
         <lettuce.version>6.1.0.RELEASE</lettuce.version>
@@ -261,22 +260,6 @@
                 <version>${glassfish-el.version}</version>
             </dependency>
 
-            <!-- Jackson -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
-            </dependency>
 
             <!-- Apache ActiveMQ -->
             <dependency>
