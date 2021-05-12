@@ -60,6 +60,8 @@ public abstract class DefaultAuthReqesut implements AuthReqeust {
         }
     }
 
+
+
     /**
      * 发生异常的情况，统一响应参数
      *

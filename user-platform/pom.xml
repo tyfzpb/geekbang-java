@@ -22,7 +22,8 @@
         <module>my-cache</module>
         <module>user-data</module>
         <module>my-auth</module>
-        <module>spring-security</module>
+        <module>spring-boot</module>
+        <module>my-session</module>
     </modules>
 
 
