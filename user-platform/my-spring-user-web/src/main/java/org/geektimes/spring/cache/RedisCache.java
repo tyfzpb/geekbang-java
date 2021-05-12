@@ -64,6 +64,8 @@ public class RedisCache extends AbstractValueAdaptingCache {
         return deserialize(valueBytes);
     }
 
+
+
     @Override
     public <T> T get(Object key, Callable<T> valueLoader) {
         return null;

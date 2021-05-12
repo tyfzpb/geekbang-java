@@ -1,0 +1,7 @@
+org/geektimes/spring/jmx/User.class
+org/geektimes/spring/jdbc/JdbcTemplateDemo.class
+org/geektimes/spring/orm/HibernateDemo.class
+org/geektimes/spring/jdbc/SimplePreparedStatementCreator.class
+org/geektimes/spring/jdbc/UserNameResultSetExtractor.class
+org/geektimes/spring/jdbc/SimplePreparedStatementSetter.class
+org/geektimes/spring/jmx/SpringJmxDemo.class
