@@ -16,10 +16,12 @@
  */
 package org.geektimes.spring.cache;
 
-import org.springframework.cache.support.AbstractValueAdaptingCache;
+import org.springframework.cache.Cache;
 import redis.clients.jedis.Jedis;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import static org.geektimes.util.SerializeUtil.deserialize;
@@ -31,18 +33,20 @@ import static org.geektimes.util.SerializeUtil.serialize;
  * @since 1.0.0
  * Date : 2021-04-29
  */
-public class RedisCache extends AbstractValueAdaptingCache {
+public class RedisCache implements Cache {
 
     private final String name;
 
     private final Jedis jedis;
 
+    private final byte[] keySetKey;
+
     public RedisCache(String name, Jedis jedis) {
-        super(true);
         Objects.requireNonNull(name, "The 'name' argument must not be null.");
         Objects.requireNonNull(jedis, "The 'jedis' argument must not be null.");
         this.name = name;
         this.jedis = jedis;
+        keySetKey = serialize(name);
     }
 
 
@@ -56,14 +60,19 @@ public class RedisCache extends AbstractValueAdaptingCache {
         return jedis;
     }
 
-
     @Override
-    protected Object lookup(Object key) {
+    public ValueWrapper get(Object key) {
         byte[] keyBytes = serialize(key);
         byte[] valueBytes = jedis.get(keyBytes);
-        return deserialize(valueBytes);
+        if (valueBytes == null)
+            return null;
+        return () -> deserialize(valueBytes);
     }
 
+    @Override
+    public <T> T get(Object key, Class<T> type) {
+        return null;
+    }
 
 
     @Override
@@ -76,6 +85,17 @@ public class RedisCache extends AbstractValueAdaptingCache {
         byte[] keyBytes = serialize(key);
         byte[] valueBytes = serialize(value);
         jedis.set(keyBytes, valueBytes);
+        saveKeySet(key);
+    }
+
+    private void saveKeySet(Object key) {
+        byte[] valueBytes = jedis.get(keySetKey);
+        Set<Object> keySet = new HashSet<>();
+        if (valueBytes != null)
+            keySet = (Set<Object>) deserialize(valueBytes);
+        keySet.add(key);
+        byte[] newValueBytes = serialize(keySet);
+        jedis.set(keySetKey, newValueBytes);
     }
 
     @Override
@@ -86,9 +106,12 @@ public class RedisCache extends AbstractValueAdaptingCache {
 
     @Override
     public void clear() {
-        // Redis 是否支持 namespace
-        // name:key
-        // String 类型的 key :
+        byte[] valueBytes = jedis.get(keySetKey);
+        Set<Object> keySet = new HashSet<>();
+        if (valueBytes != null)
+            keySet = (Set<Object>) deserialize(valueBytes);
+        keySet.stream().map(key -> serialize(key)).forEach(jedis::del);
+        jedis.del(keySetKey);
     }
 
 
