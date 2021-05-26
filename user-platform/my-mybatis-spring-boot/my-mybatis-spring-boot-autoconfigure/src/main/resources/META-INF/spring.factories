@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.geektimes.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration

@@ -1,5 +1,5 @@
 ## 第十周作业说明：
-### @org.geektimes.projects.user.mybatis.annotation.EnableMyBatis 实现，尽可能多地注入org.mybatis.spring.SqlSessionFactoryBean 中依赖的组件
+### @org.geektimes.projects.user.org.geektimes.mybatis.spring.annotation.EnableMyBatis 实现，尽可能多地注入org.mybatis.spring.SqlSessionFactoryBean 中依赖的组件
 
 
 ### 完成情况：

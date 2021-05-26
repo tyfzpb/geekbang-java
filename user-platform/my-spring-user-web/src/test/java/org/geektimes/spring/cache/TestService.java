@@ -1,6 +1,6 @@
 package org.geektimes.spring.cache;
 
-import org.geektimes.spring.mybatis.entry.Users;
+import org.geektimes.spring.entry.Users;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

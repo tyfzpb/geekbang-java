@@ -24,6 +24,8 @@
         <module>my-auth</module>
         <module>my-session</module>
         <module>my-spring-user-web</module>
+        <module>my-mybatis-spring-boot</module>
+        <module>my-mybatis-spring</module>
     </modules>
 
 
@@ -358,6 +360,20 @@
     <build>
         <pluginManagement>
             <plugins>
+
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>

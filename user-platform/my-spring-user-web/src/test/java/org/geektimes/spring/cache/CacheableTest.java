@@ -16,14 +16,11 @@
  */
 package org.geektimes.spring.cache;
 
-import org.geektimes.spring.mybatis.entry.Users;
+import org.geektimes.spring.entry.Users;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -35,7 +32,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {CacheableTest.class, CacheManagerConfig.class,TestService.class})
+@ContextConfiguration(classes = {CacheableTest.class, CacheManagerConfig.class, TestService.class})
 public class CacheableTest {
 
     @Autowired
@@ -60,12 +57,12 @@ public class CacheableTest {
         testService.eviect("ty");
         Users user5 = testService.get("ty");
         System.out.println(user5);
-        Assert.assertNotEquals(user3,user5);
+        Assert.assertNotEquals(user3, user5);
         System.out.println("---------------清除缓存------------------");
         testService.clear();
         Users user6 = testService.get("fzpb");
         System.out.println(user6);
-        Assert.assertNotEquals(user4,user6);
+        Assert.assertNotEquals(user4, user6);
 
     }
 
