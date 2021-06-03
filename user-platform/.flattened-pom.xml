@@ -17,31 +17,43 @@
     <module>my-rest-client</module>
     <module>my-reactive-messaging</module>
     <module>my-cache</module>
+    <module>user-data</module>
+    <module>my-auth</module>
+    <module>my-session</module>
+    <module>my-spring-user-web</module>
+    <module>my-mybatis-spring-boot</module>
+    <module>my-mybatis-spring</module>
+    <module>spring-cloud-projects</module>
   </modules>
   <properties>
     <tomcat7.version>7.0.37</tomcat7.version>
     <microprofile-config-api.version>2.0</microprofile-config-api.version>
     <maven.war.version>3.3.1</maven.war.version>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.target>8</maven.compiler.target>
+    <dubbo.version>2.7.10</dubbo.version>
     <javax.interceptor-api.version>1.2</javax.interceptor-api.version>
     <maven.flatten.version>1.2.5</maven.flatten.version>
     <commons-configuration.version>1.10</commons-configuration.version>
     <microprofile-rest-client-api.version>2.0</microprofile-rest-client-api.version>
     <javax.cdi-api.version>2.0</javax.cdi-api.version>
     <javax.inject.version>1</javax.inject.version>
+    <spring.cloud-version>2020.0.0</spring.cloud-version>
     <hibernate.validator.version>5.4.3.Final</hibernate.validator.version>
     <javax.cache-api.version>1.1.1</javax.cache-api.version>
     <junit-jupiter-engine.version>5.7.1</junit-jupiter-engine.version>
+    <mybatis-spring.version>2.0.6</mybatis-spring.version>
     <microprofile-reactive-messaging-api.version>1.0</microprofile-reactive-messaging-api.version>
+    <lombok.version>1.18.10</lombok.version>
     <glassfish-el.version>3.0.1-b08</glassfish-el.version>
-    <jackson.version>2.9.5</jackson.version>
+    <jackson.version>2.10.1</jackson.version>
     <project.build.sourceEncoding>${file.encoding}</project.build.sourceEncoding>
     <maven.deploy.version>2.8.2</maven.deploy.version>
     <junit-vintage-vintage.version>5.7.1</junit-vintage-vintage.version>
+    <spring.cloud.alibaba.version>2021.1</spring.cloud.alibaba.version>
     <maven.jar.version>3.2.0</maven.jar.version>
-    <spring-boot.version>2.4.5</spring-boot.version>
+    <spring-boot.version>2.4.2</spring-boot.version>
     <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
-    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.source>8</maven.compiler.source>
     <microprofile-fault-tolerance-api.version>3.0</microprofile-fault-tolerance-api.version>
     <commons-dbcp.version>1.4</commons-dbcp.version>
     <commons-io.version>2.4</commons-io.version>
@@ -53,23 +65,72 @@
     <derby.version>10.14.2.0</derby.version>
     <jedis.version>3.5.2</jedis.version>
     <lettuce.version>6.1.0.RELEASE</lettuce.version>
+    <spring-dao.version>2.0.8</spring-dao.version>
+    <mybatis.version>3.5.7</mybatis.version>
     <commons-lang.version>2.6</commons-lang.version>
     <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
     <maven.compiler.version>3.8.1</maven.compiler.version>
     <activemq.version>5.9.1</activemq.version>
     <jstl.version>1.2</jstl.version>
     <javax.ws.rs-api.version>2.0.1</javax.ws.rs-api.version>
-    <revision>v1-SNAPSHOT</revision>
     <junit-platform-launcher.version>1.7.1</junit-platform-launcher.version>
+    <revision>v1-SNAPSHOT</revision>
   </properties>
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>2.10.1</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>2.10.1</version>
+      </dependency>
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-annotations</artifactId>
+        <version>2.10.1</version>
+      </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
         <version>${spring-boot.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring.cloud-version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+        <version>${spring.cloud.alibaba.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.dubbo</groupId>
+        <artifactId>dubbo-dependencies-bom</artifactId>
+        <version>${dubbo.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.dubbo</groupId>
+        <artifactId>dubbo</artifactId>
+        <version>${dubbo.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.dubbo</groupId>
+        <artifactId>dubbo-dependencies-zookeeper</artifactId>
+        <version>${dubbo.version}</version>
+        <type>pom</type>
       </dependency>
       <dependency>
         <groupId>javax.servlet</groupId>
@@ -110,6 +171,11 @@
         <groupId>javax.interceptor</groupId>
         <artifactId>javax.interceptor-api</artifactId>
         <version>${javax.interceptor-api.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
       </dependency>
       <dependency>
         <groupId>org.eclipse.microprofile.config</groupId>
@@ -182,24 +248,24 @@
         <version>${glassfish-el.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-core</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-databind</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.fasterxml.jackson.core</groupId>
-        <artifactId>jackson-annotations</artifactId>
-        <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-all</artifactId>
         <version>${activemq.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mybatis</groupId>
+        <artifactId>mybatis</artifactId>
+        <version>${mybatis.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mybatis</groupId>
+        <artifactId>mybatis-spring</artifactId>
+        <version>${mybatis-spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-dao</artifactId>
+        <version>${spring-dao.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.tomcat</groupId>
@@ -255,6 +321,18 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring-boot.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>repackage</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
           <artifactId>maven-source-plugin</artifactId>
           <version>${maven.source.version}</version>
           <executions>
@@ -286,7 +364,6 @@
         <version>${maven.compiler.version}</version>
         <configuration>
           <compilerArgs>
-            <compilerArg>-proc:none</compilerArg>
             <compilerArg>-parameters</compilerArg>
           </compilerArgs>
           <fork>true</fork>

@@ -42,7 +42,12 @@ public class ConfigClient {
 
     @Bean
     public ApplicationRunner runner() {
-        return args -> System.out.printf("my.name = %s, my.age = %d %n", myName, myAge);
+        return args -> {
+            while(true){
+                System.out.printf("my.name = %s, my.age = %d %n", myName, myAge);
+                Thread.sleep(1000);
+            }
+        };
     }
 
 

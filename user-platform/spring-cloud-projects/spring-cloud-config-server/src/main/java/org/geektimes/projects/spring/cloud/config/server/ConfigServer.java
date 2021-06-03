@@ -16,6 +16,10 @@
  */
 package org.geektimes.projects.spring.cloud.config.server;
 
+import org.geektimes.projects.spring.cloud.config.server.domain.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.context.WebServerInitializedEvent;
@@ -23,6 +27,9 @@ import org.springframework.boot.web.server.WebServer;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.config.server.EnableConfigServer;
 import org.springframework.context.event.EventListener;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Spring Cloud Config Server 引导类
@@ -32,8 +39,11 @@ import org.springframework.context.event.EventListener;
  */
 @SpringBootApplication
 @EnableConfigServer // 激活 Config Server
-@EnableDiscoveryClient // 激活服务注册与发现
-public class ConfigServer {
+@EnableDiscoveryClient
+public class ConfigServer implements ApplicationRunner {
+    @Autowired
+    private User user;
+
     public static void main(String[] args) {
         SpringApplication.run(ConfigServer.class, args);
     }
@@ -43,4 +53,12 @@ public class ConfigServer {
         WebServer webServer = event.getWebServer();
         System.out.println("当前 Web 服务器端口：" + webServer.getPort());
     }
+
+    public void run(ApplicationArguments args) throws Exception {
+        Executors.newSingleThreadScheduledExecutor().scheduleAtFixedRate(() ->
+                        System.out.println("user: " + user),
+                0, 1, TimeUnit.SECONDS);
+    }
+
+
 }

@@ -9,16 +9,19 @@ spring:
   ## 配置直连模式
   config:
     import: 'optional:configserver:http://127.0.0.1:8888'
+    activate:
+      on-profile:
+        - test
   ## 配置服务发现模式
-  cloud:
-    config:
-      discovery:
-        enabled: true
-        serviceId: config-server
+#  cloud:
+#    config:
+#      discovery:
+#        enabled: true
+#        serviceId: config-server
 
 # 配置 Eureka Client（可参考 EurekaClientConfigBean）
 # 配置 Eureka Client 示例（可参考 EurekaInstanceConfigBean）
-eureka:
-  client:
-    service-url:
-      defaultZone: 'http://127.0.0.1:12345/eureka'
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: 'http://127.0.0.1:12345/eureka'
