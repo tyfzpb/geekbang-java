@@ -5,11 +5,13 @@
     <parent>
         <artifactId>user-platform</artifactId>
         <groupId>org.geekbang.projects</groupId>
-        <version>v1-SNAPSHOT</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>my-spring-user-web</artifactId>
+    <name>My-spring-user-web ${revision}</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -60,12 +62,6 @@
             <artifactId>spring-test</artifactId>
         </dependency>
 
-
-
-
-
-
-
         <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
@@ -94,10 +90,6 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
         </dependency>
 
     </dependencies>
