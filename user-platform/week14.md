@@ -18,7 +18,7 @@
       org.geektimes.projects.spring.cloud.bus.redis.RedisBusAutoConfiguration,\
       org.geektimes.projects.spring.cloud.bus.redis.RedisMessagePubSubListener
       ```
-    - [ReidsBusBridge](https://gitee.com/ty-fzpb/geekbang-java/tree/soa/user-platform/spring-cloud-projects/spring-cloud-bus-redis/src/main/java/org/geektimes/projects/spring/cloud/bus/redis/RedisBusAutoBridge.java) 实现 BusBridge
+    - [ReidsBusBridge](https://gitee.com/ty-fzpb/geekbang-java/tree/soa/user-platform/spring-cloud-projects/spring-cloud-bus-redis/src/main/java/org/geektimes/projects/spring/cloud/bus/redis/RedisBusBridge.java) 实现 BusBridge
       ```java
       @Override
       public void send(RemoteApplicationEvent event) {
@@ -87,13 +87,14 @@
         - 返回为NULL  
       3、执行POST请求 http://localhost:19092/actuator/busenv?name=test&value=tyfzpb
           ![img.png](img.png)
-          ServiceConsumer 控制台会输出如下：
+          - ServiceConsumer 控制台会输出如下：
           ```shell
            onMessage: [channel :springCloudBus, message : {"hello":"tyfzpb"}]
           ``` 
-      4、 再次执行Get请求 http://localhost:19092/bus/env?key=test
+      4、 再次执行Get请求 
+        - http://localhost:19092/bus/env?key=test
           ![img_1.png](img_1.png)
-          http://localhost:8081/bus/env?key=test
+        - http://localhost:8081/bus/env?key=test
           ![img_2.png](img_2.png)
       
   
