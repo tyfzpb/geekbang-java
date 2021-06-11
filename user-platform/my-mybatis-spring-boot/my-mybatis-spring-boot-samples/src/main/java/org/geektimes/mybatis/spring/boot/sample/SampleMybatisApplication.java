@@ -22,6 +22,6 @@ public class SampleMybatisApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        this.cityMapper.getAll().stream().forEach(System.out::println);
+        this.cityMapper.getAll().forEach(System.out::println);
     }
 }
