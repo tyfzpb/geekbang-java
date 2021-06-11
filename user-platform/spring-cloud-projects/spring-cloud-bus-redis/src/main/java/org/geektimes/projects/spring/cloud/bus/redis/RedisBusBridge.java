@@ -36,6 +36,5 @@ public class RedisBusBridge implements BusBridge {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 }
