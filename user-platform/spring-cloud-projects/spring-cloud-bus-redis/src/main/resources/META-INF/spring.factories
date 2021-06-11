@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.geektimes.projects.spring.cloud.bus.redis.RedisBusAutoConfiguration,\
+org.geektimes.projects.spring.cloud.bus.redis.RedisMessagePubSubListener

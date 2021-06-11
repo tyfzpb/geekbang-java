@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.geektimes.spring.cache;
+package org.geektimes.projects.spring.cloud.bus.redis;
 
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
