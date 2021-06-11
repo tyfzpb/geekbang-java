@@ -29,12 +29,15 @@ public class RedisBusBridge implements BusBridge {
         destination = destination == null ? "defaultRedisData" : destination;
         Jedis jedis = (Jedis) redisCacheManager.getMissingCache(destination).getNativeCache();
 
-        Map<String, String> map = ((EnvironmentChangeRemoteApplicationEvent) event).getValues();
+        String jsonData  = null;
+
         try {
-            String jsonData = objectMapper.writeValueAsString(map);
-            jedis.publish(destination, jsonData);
+          jsonData = objectMapper.writeValueAsString(event);
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        jedis.publish(destination, jsonData);
     }
 }

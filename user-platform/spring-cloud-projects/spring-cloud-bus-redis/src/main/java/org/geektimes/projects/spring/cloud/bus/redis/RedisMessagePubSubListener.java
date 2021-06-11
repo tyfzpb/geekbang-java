@@ -3,6 +3,7 @@ package org.geektimes.projects.spring.cloud.bus.redis;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeansException;
+import org.springframework.cloud.bus.event.EnvironmentChangeRemoteApplicationEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
@@ -22,19 +23,28 @@ public class RedisMessagePubSubListener extends JedisPubSub implements Applicati
 
     public void onMessage(String channel, String message) {
         System.out.println("onMessage: [channel :" + channel + ", message : " + message + "]");
-        Map<String, Object> map = null;
+        EnvironmentChangeRemoteApplicationEvent event = null;
         try {
-            map = objectMapper.readValue(message, Map.class);
+            String messageType = objectMapper.readTree(message).get("type").asText();
+            if (EnvironmentChangeRemoteApplicationEvent.class.getSimpleName().equals(messageType)) {
+                event = objectMapper.readValue(message, EnvironmentChangeRemoteApplicationEvent.class);
+            }
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
-        ConfigurableEnvironment environment = (ConfigurableEnvironment) applicationContext.getEnvironment();
-        MutablePropertySources propertySources = environment.getPropertySources();
-        Properties properties = new Properties();
-        for (String key : map.keySet()) {
-            properties.put(key, map.get(key));
+        if (event != null) {
+            Map<String, String> map = event.getValues();
+            ConfigurableEnvironment environment = (ConfigurableEnvironment) applicationContext.getEnvironment();
+            MutablePropertySources propertySources = environment.getPropertySources();
+            Properties properties = new Properties();
+            for (String key : map.keySet()) {
+                properties.put(key, map.get(key));
+            }
+            propertySources.addFirst(new PropertiesPropertySource("defaultProperties", properties));
+        } else {
+            // TODO
         }
-        propertySources.addFirst(new PropertiesPropertySource("defaultProperties", properties));
+
     }
 
     @Override

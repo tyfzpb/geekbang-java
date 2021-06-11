@@ -17,7 +17,6 @@ public class RedisBusAutoConfiguration {
 
     public static final String DEFAULT_REDIS_CONNECTION_STRING = "redis://localhost:6379";
 
-
     @Bean
     public RedisCacheManager redisCacheManager() {
         return new RedisCacheManager(DEFAULT_REDIS_CONNECTION_STRING);

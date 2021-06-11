@@ -89,14 +89,22 @@
           ![img.png](img.png)
           - 同时ServiceConsumer 控制台会输出如下：
           ```shell
-           onMessage: [channel :springCloudBus, message : {"test":"tyfzpb"}]
+           onMessage: [channel :springCloudBus, message : {"type":"EnvironmentChangeRemoteApplicationEvent","timestamp":1623420325185,"originService":"spring-cloud-service-provider:19092:${cachedrandom.${vcap.application.name:${spring.application.name:application}}.value}","destinationService":"**","id":"4fe4c35a-b042-40e5-9262-88912f7b2916","values":{"test":"tyfzpb"}}]
           ``` 
           - 同时本地redis-cli 订阅subscribe  springCloudBus 后 也会输出如下内容：
-           - ![img_3.png](img_3.png)
+           - ![img_4.png](img_4.png)
       - 4、 再次执行Get请求 
         - http://localhost:19092/bus/env?key=test
           ![img_1.png](img_1.png)
         - http://localhost:8081/bus/env?key=test
           ![img_2.png](img_2.png)
       
+      - 5、执行POST请求 http://localhost:19092/actuator/busrefresh
+        ![img_5.png](img_5.png)
+        - 同时ServiceConsumer 控制台会输出如下：
+        ```shell
+           onMessage: [channel :springCloudBus, message : {"type":"RefreshRemoteApplicationEvent","timestamp":1623421967814,"originService":"spring-cloud-service-provider:19092:${cachedrandom.${vcap.application.name:${spring.application.name:application}}.value}","destinationService":"**","id":"c3949b71-ac38-4e15-a725-5012eff36529"}]
+         ```
+        - 同时本地redis-cli 订阅subscribe  springCloudBus 后 也会输出如下内容：
+        - ![img_4.png](img_4.png)
   
