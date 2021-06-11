@@ -79,19 +79,21 @@
         }
         ```
     - 测试过程：
-      1、启动服务：EurekaServer、ServiceProvider、ServiceConsumer
-      2、请求地址：
+      - 1、启动服务：EurekaServer、ServiceProvider、ServiceConsumer
+      - 2、请求地址：
         http://localhost:19092/bus/env?key=test 
         - 返回为NULL   
         http://localhost:8081/bus/env?key=test
         - 返回为NULL  
-      3、执行POST请求 http://localhost:19092/actuator/busenv?name=test&value=tyfzpb
+      - 3、执行POST请求 http://localhost:19092/actuator/busenv?name=test&value=tyfzpb
           ![img.png](img.png)
-          - ServiceConsumer 控制台会输出如下：
+          - 同时ServiceConsumer 控制台会输出如下：
           ```shell
            onMessage: [channel :springCloudBus, message : {"hello":"tyfzpb"}]
           ``` 
-      4、 再次执行Get请求 
+          - 同时本地redis-cli 订阅subscribe  springCloudBus 后 也会输出如下内容：
+          ![img_3.png](img_3.png)
+      - 4、 再次执行Get请求 
         - http://localhost:19092/bus/env?key=test
           ![img_1.png](img_1.png)
         - http://localhost:8081/bus/env?key=test
