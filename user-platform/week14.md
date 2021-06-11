@@ -92,7 +92,7 @@
            onMessage: [channel :springCloudBus, message : {"test":"tyfzpb"}]
           ``` 
           - 同时本地redis-cli 订阅subscribe  springCloudBus 后 也会输出如下内容：
-           -![img_3.png](img_3.png)
+           - ![img_3.png](img_3.png)
       - 4、 再次执行Get请求 
         - http://localhost:19092/bus/env?key=test
           ![img_1.png](img_1.png)
