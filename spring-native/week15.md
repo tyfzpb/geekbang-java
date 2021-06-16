@@ -49,7 +49,7 @@
       ```
       - ps: 其中 $JAVA_HOME 是graalvm所在目录
   
-    -6、编译spring-native sample项目
+    - 6、编译spring-native sample项目
       ```shell
         jdk11_graalvm
         mvn -Pnative package
